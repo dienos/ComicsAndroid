@@ -9,6 +9,10 @@ android {
     namespace = "com.kstd.android.jth"
     compileSdk = 36
 
+    buildFeatures {
+        dataBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.kstd.android.jth"
         minSdk = 26
@@ -38,7 +42,12 @@ android {
 }
 
 dependencies {
+    implementation(project(":data"))
     implementation(project(":domain"))
+
+    // Navigation Component
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -53,6 +62,7 @@ dependencies {
     implementation(libs.gson)
 
     implementation(libs.glide)
+
     kapt(libs.glide.compiler)
 
     implementation(libs.hilt.android)

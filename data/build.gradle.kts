@@ -15,7 +15,7 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 36
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.kstd.android.jth.data.CustomTestRunner"
     }
 
     buildTypes {
@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
@@ -48,9 +49,13 @@ dependencies {
     implementation(libs.okhttp.logging)
 
     implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     kapt(libs.androidx.hilt.compiler)
+
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler)
 }

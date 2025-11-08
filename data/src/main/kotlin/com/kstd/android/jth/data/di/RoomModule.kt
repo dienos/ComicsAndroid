@@ -7,26 +7,26 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import com.kstd.android.jth.data.datasource.local.db.SampleDataBase
-import com.kstd.android.jth.data.datasource.local.db.SampleDao
+import com.kstd.android.jth.data.datasource.local.db.ComicsDataBase
+import com.kstd.android.jth.data.datasource.local.db.ComicsDao
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 object RoomModule {
-    private const val name = "sample.db"
+    private const val NAME = "comics.db"
 
     @Provides
     @Singleton
-    fun provideSampleDao(dataBase: SampleDataBase): SampleDao {
-        return dataBase.SampleDao()
+    fun provideComicsDao(dataBase: ComicsDataBase): ComicsDao {
+        return dataBase.comicsDao()
     }
 
     @Provides
     @Singleton
-    fun provideSampleDatabase(
+    fun provideComicsDataBase(
         @ApplicationContext context: Context
-    ): SampleDataBase = Room
-        .databaseBuilder(context, SampleDataBase::class.java, name)
+    ): ComicsDataBase = Room
+        .databaseBuilder(context, ComicsDataBase::class.java, NAME)
         .build()
 }

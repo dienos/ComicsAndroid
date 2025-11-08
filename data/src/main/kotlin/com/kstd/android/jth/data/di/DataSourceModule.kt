@@ -1,13 +1,13 @@
 package com.kstd.android.jth.data.di
 
+import com.kstd.android.jth.data.datasource.local.source.ComicsLocalSource
+import com.kstd.android.jth.data.datasource.local.source.ComicsLocalSourceImpl
+import com.kstd.android.jth.data.datasource.remote.source.ComicsRemoteSource
+import com.kstd.android.jth.data.datasource.remote.source.ComicsRemoteSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import com.kstd.android.jth.data.datasource.local.source.SampleLocalSource
-import com.kstd.android.jth.data.datasource.local.source.SampleLocalSourceImpl
-import com.kstd.android.jth.data.datasource.remote.source.SampleRemoteSource
-import com.kstd.android.jth.data.datasource.remote.source.SampleRemoteSourceImpl
 import javax.inject.Singleton
 
 @Module
@@ -15,9 +15,9 @@ import javax.inject.Singleton
 abstract class DataSourceModule {
     @Singleton
     @Binds
-    abstract fun bindsSimpleRemoteSource(source: SampleRemoteSourceImpl): SampleRemoteSource
+    abstract fun bindsSimpleRemoteSource(source: ComicsRemoteSourceImpl): ComicsRemoteSource
 
     @Singleton
     @Binds
-    abstract fun bindsSimpleLocalSource(source: SampleLocalSourceImpl): SampleLocalSource
+    abstract fun bindsSimpleLocalSource(source: ComicsLocalSourceImpl): ComicsLocalSource
 }
