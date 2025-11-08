@@ -20,6 +20,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "KSTDAndroidJTH"
-include(":app")
+include(":ui")
 include(":domain")
 include(":data")

@@ -1,22 +1,136 @@
 [versions]
+# Kotlin / Gradle
+kotlin = "2.2.21"
+kapt = "2.2.21"
 agp = "8.13.0"
-kotlin = "2.0.21"
-coreKtx = "1.10.1"
-junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
-appcompat = "1.6.1"
-material = "1.10.0"
 
-[libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+# AndroidX
+coreKtx = "1.7.0"
+appcompat = "1.4.2"
+material = "1.6.1"
+recyclerView = "1.2.1"
+activityKtx = "1.1.0"
+fragmentKtx = "1.2.5"
+splashscreen = "1.0.0-beta01"
 
+# Room
+room = "2.4.2"
+
+# Hilt
+hilt = "2.57.2"
+androidxHilt = "1.0.0"
+androidxHiltViewModel = "1.0.0-alpha03"
+
+# Coroutines
+coroutines = "1.5.2"
+
+# Retrofit / OkHttp / Gson
+retrofit = "2.9.0"
+okhttp = "4.9.1"
+gson = "2.8.8"
+
+# Google Play Services
+playServicesAuth = "17.5.1"
+playServicesLocation = "18.0.0"
+
+# Square Misc
+otto = "1.3.8"
+
+# Testing
+mockk = "1.11.0"
+archCore = "2.1.0"
+junitExt = "1.1.3"
+espresso = "3.4.0"
+
+# Glide
+glide = "5.0.5"
+
+##############################################
+# PLUGINS
+##############################################
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
+##############################################
+# LIBRARIES
+##############################################
+[libraries]
+### AndroidX Core ###
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+google-material = { module = "com.google.android.material:material", version.ref = "material" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerView" }
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
+androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
+
+### Room ###
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
+### Hilt (Dagger + AndroidX Hilt) ###
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidxHilt" }
+androidx-hilt-lifecycle-viewmodel = { module = "androidx.hilt:hilt-lifecycle-viewmodel", version.ref = "androidxHiltViewModel" }
+
+### Coroutines ###
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+
+### Retrofit / OkHttp ###
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+retrofit-adapter-rxjava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "retrofit" }
+retrofit-adapter-rxjava2 = { module = "com.squareup.retrofit2:adapter-rxjava2", version.ref = "retrofit" }
+
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+okhttp-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
+
+### Gson ###
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+### Google Play Services ###
+play-services-auth-api-phone = { module = "com.google.android.gms:play-services-auth-api-phone", version.ref = "playServicesAuth" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+
+### Glide ###
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+
+### Otto ###
+otto = { module = "com.squareup:otto", version.ref = "otto" }
+
+### Test ###
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+androidx-arch-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "archCore" }
+junit = { module = "androidx.test.ext:junit", version.ref = "junitExt" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+
+##############################################
+# BUNDLES (옵션)
+##############################################
+[bundles]
+retrofit-full = [
+    "retrofit",
+    "retrofit-converter-gson",
+    "retrofit-adapter-rxjava2",
+    "retrofit-adapter-rxjava3",
+    "okhttp",
+    "okhttp-logging",
+    "gson"
+]
+androidx-core = [
+    "androidx-core-ktx",
+    "androidx-appcompat",
+    "google-material",
+    "androidx-recyclerview",
+    "androidx-activity-ktx",
+    "androidx-fragment-ktx",
+    "androidx-splashscreen"
+]
