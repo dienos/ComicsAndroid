@@ -45,7 +45,8 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":domain"))
 
-    // Navigation Component
+    implementation(libs.androidx.paging.runtime.ktx)
+
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
@@ -56,6 +57,7 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.splashscreen)
+    implementation(libs.androidx.swiperefreshlayout)
 
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.kotlinx.coroutines.test)

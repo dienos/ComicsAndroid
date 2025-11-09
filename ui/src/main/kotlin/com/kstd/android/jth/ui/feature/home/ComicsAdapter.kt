@@ -2,13 +2,13 @@ package com.kstd.android.jth.ui.feature.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.kstd.android.jth.databinding.ItemComicBinding
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 
-class ComicsAdapter(private val viewModel: ComicsViewModel) : ListAdapter<ComicsItem, ComicsAdapter.ComicViewHolder>(ComicDiffCallback()) {
+class ComicsAdapter(private val viewModel: ComicsViewModel) : PagingDataAdapter<ComicsItem, ComicsAdapter.ComicViewHolder>(ComicDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComicViewHolder {
         val binding = ItemComicBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -16,7 +16,9 @@ class ComicsAdapter(private val viewModel: ComicsViewModel) : ListAdapter<Comics
     }
 
     override fun onBindViewHolder(holder: ComicViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        getItem(position)?.let {
+            holder.bind(it)
+        }
     }
 
     inner class ComicViewHolder(private val binding: ItemComicBinding) : RecyclerView.ViewHolder(binding.root) {

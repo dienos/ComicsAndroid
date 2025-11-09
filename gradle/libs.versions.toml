@@ -13,6 +13,8 @@ activityKtx = "1.1.0"
 fragmentKtx = "1.2.5"
 splashscreen = "1.0.0-beta01"
 navigation = "2.7.7"
+paging = "3.2.1"
+swiperefreshlayout = "1.1.0"
 
 # Room
 room = "2.4.2"
@@ -68,10 +70,14 @@ androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 ### Navigation ###
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
+
+### Paging ###
+androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
 
 ### Room ###
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }

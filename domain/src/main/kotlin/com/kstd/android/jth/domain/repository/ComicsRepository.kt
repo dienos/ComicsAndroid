@@ -6,7 +6,7 @@ import com.kstd.android.jth.domain.model.remote.ComicsResponse
 import kotlinx.coroutines.flow.Flow
 
 interface ComicsRepository {
-    suspend fun fetchComics(): ApiResult<ComicsResponse>
+    suspend fun fetchComics(page: Int, size: Int): ApiResult<ComicsResponse>
 
     fun getBookmark(): Flow<List<BookmarkItem>>
 }

@@ -6,5 +6,5 @@ import com.kstd.android.jth.domain.repository.ComicsRepository
 import javax.inject.Inject
 
 class FetchComicsUseCase @Inject constructor(private val repository: ComicsRepository) {
-    suspend operator fun invoke(): ApiResult<ComicsResponse> = repository.fetchComics()
+    suspend operator fun invoke(page: Int, size: Int): ApiResult<ComicsResponse> = repository.fetchComics(page, size)
 }
