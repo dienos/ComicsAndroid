@@ -1,6 +1,7 @@
 package com.kstd.android.jth.ui.base
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -28,6 +29,14 @@ abstract class BaseActivity<T : ViewDataBinding>(@LayoutRes private val layoutRe
                 } else {
                     hideProgress()
                 }
+            }
+        }
+    }
+
+    protected fun observeToastEvents(viewModel: BaseViewModel) {
+        lifecycleScope.launch {
+            viewModel.toastEvent.collectLatest { message ->
+                Toast.makeText(this@BaseActivity, message, Toast.LENGTH_SHORT).show()
             }
         }
     }

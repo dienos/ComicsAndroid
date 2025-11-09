@@ -33,6 +33,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun setupRecyclerView() {
+        binding.rvComicsFragment.setHasFixedSize(true)
         binding.rvComicsFragment.adapter = comicsAdapter
     }
 
@@ -56,8 +57,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            comicsAdapter.loadStateFlow.collectLatest {
-                viewModel.setLoading(it.refresh is LoadState.Loading)
+            comicsAdapter.loadStateFlow.collectLatest { loadStates ->
+                viewModel.setLoading(loadStates.refresh is LoadState.Loading)
             }
         }
     }

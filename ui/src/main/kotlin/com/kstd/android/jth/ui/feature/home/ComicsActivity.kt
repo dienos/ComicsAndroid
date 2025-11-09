@@ -19,6 +19,7 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
 
         setupNavigation()
         observeLoadingState(viewModel)
+        observeToastEvents(viewModel)
     }
 
     private fun setupNavigation() {

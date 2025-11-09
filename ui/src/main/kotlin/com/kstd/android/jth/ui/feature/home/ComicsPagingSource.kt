@@ -6,12 +6,16 @@ import androidx.paging.PagingState
 import com.kstd.android.jth.domain.model.ApiResult
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.domain.usecase.FetchComicsUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
 private const val TAG = "ComicsPagingSource"
 
 class ComicsPagingSource(
-    private val fetchComicsUseCase: FetchComicsUseCase
+    private val fetchComicsUseCase: FetchComicsUseCase,
+    private val onError: (String) -> Unit,
+    private val onEmpty: () -> Unit
 ) : PagingSource<Int, ComicsItem>() {
 
     companion object {
@@ -21,23 +25,28 @@ class ComicsPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ComicsItem> {
         val start = params.key ?: STARTING_INDEX
-        Log.d(TAG, "Requesting start index: $start")
 
         return when (val result = fetchComicsUseCase(page = start, size = PAGE_SIZE)) {
             is ApiResult.Success -> {
                 val comics = result.data.items
 
+                if (comics.isEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        onEmpty()
+                    }
+                }
+
                 comics.forEachIndexed { index, item -> 
                     val overallIndex = start + index
                     Log.d(TAG, "Item[$overallIndex]: ${item.title}")
                 }
-                
+
                 val nextKey = if (comics.isEmpty()) {
                     null
                 } else {
                     start + comics.size
                 }
-
+                
                 LoadResult.Page(
                     data = comics,
                     prevKey = if (start == STARTING_INDEX) null else start - PAGE_SIZE,
@@ -45,8 +54,14 @@ class ComicsPagingSource(
                 )
             }
             is ApiResult.Error -> {
-                Log.e(TAG, "Error loading from start index $start: [${result.code}] ${result.message}")
-                LoadResult.Error(IOException("[${result.code}] ${result.message}"))
+                val errorMessage = "[${result.code}] ${result.message}"
+                Log.e(TAG, "Error loading from start index $start: $errorMessage")
+
+                withContext(Dispatchers.Main) {
+                    onError(errorMessage)
+                }
+
+                LoadResult.Error(IOException(errorMessage))
             }
         }
     }

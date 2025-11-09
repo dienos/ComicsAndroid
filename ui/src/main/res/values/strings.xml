@@ -1,3 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">KSTDAndroidJTH</string>
+    <string name="app_name">K Comics</string>
+
+    <!-- Comics Feature -->
+    <string name="comics_tab_home">Home</string>
+    <string name="comics_tab_bookmark">Bookmark</string>
+    <string name="comics_fetch_error">Failed to load data. [%s] %s</string>
+    <string name="comics_no_results">No results found.</string>
+
 </resources>

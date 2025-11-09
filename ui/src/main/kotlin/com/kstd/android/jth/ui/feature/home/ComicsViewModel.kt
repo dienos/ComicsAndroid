@@ -1,10 +1,12 @@
 package com.kstd.android.jth.ui.feature.home
 
+import android.app.Application
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.kstd.android.jth.R
 import com.kstd.android.jth.domain.model.local.BookmarkItem
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.domain.usecase.GetBookMarkUseCase
@@ -22,9 +24,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ComicsViewModel @Inject constructor(
+    application: Application,
     private val fetchComicsUseCase: FetchComicsUseCase,
     private val getBookmarkUseCase: GetBookMarkUseCase
-) : BaseViewModel() {
+) : BaseViewModel(application) {
 
     val comicsFlow: Flow<PagingData<ComicsItem>> = Pager(
         config = PagingConfig(
@@ -33,7 +36,17 @@ class ComicsViewModel @Inject constructor(
             enablePlaceholders = false,
             prefetchDistance = 15
         ),
-        pagingSourceFactory = { ComicsPagingSource(fetchComicsUseCase) }
+        pagingSourceFactory = { 
+            ComicsPagingSource(
+                fetchComicsUseCase = fetchComicsUseCase, 
+                onEmpty = { 
+                    showToast(getApplication<Application>().getString(R.string.comics_no_results))
+                }, 
+                onError =  { message ->
+                    showToast(message)
+                }
+            )
+        }
     ).flow.cachedIn(viewModelScope)
 
     private val _bookmarkData = MutableStateFlow<List<BookmarkItem>>(emptyList())
