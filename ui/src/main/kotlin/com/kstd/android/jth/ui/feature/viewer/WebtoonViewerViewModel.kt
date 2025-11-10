@@ -1,10 +1,42 @@
 package com.kstd.android.jth.ui.feature.viewer
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.kstd.android.jth.domain.model.remote.ComicsItem
+import com.kstd.android.jth.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class WebtoonViewerViewModel @Inject constructor() : ViewModel() {
-    // TODO: Implement Paging logic for webtoon images
+class WebtoonViewerViewModel @Inject constructor(
+    application: Application
+) : BaseViewModel(application) {
+
+    private val _webtoonFlow = MutableStateFlow<Flow<PagingData<ComicsItem>>?>(null)
+    val webtoonFlow: StateFlow<Flow<PagingData<ComicsItem>>?> = _webtoonFlow.asStateFlow()
+
+    private val _initialIndex = MutableStateFlow(0)
+    val initialIndex: StateFlow<Int> = _initialIndex.asStateFlow()
+
+    private val _title = MutableStateFlow("")
+    val title: StateFlow<String> = _title.asStateFlow()
+
+    fun setWebtoonData(comics: List<ComicsItem>, index: Int) {
+        _initialIndex.value = index
+        if (comics.isNotEmpty()) {
+            _title.value = comics[index].title ?: ""
+        }
+        _webtoonFlow.value = Pager(
+            config = PagingConfig(pageSize = 30),
+            pagingSourceFactory = { WebtoonPagingSource(comics) }
+        ).flow.cachedIn(viewModelScope)
+    }
 }

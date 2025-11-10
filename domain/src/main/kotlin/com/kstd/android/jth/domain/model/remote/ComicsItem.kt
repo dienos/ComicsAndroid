@@ -1,6 +1,9 @@
 package com.kstd.android.jth.domain.model.remote
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class ComicsItem(
     val title: String? = null,
     val link: String? = null,
@@ -10,4 +13,4 @@ data class ComicsItem(
     val isBookmarked: Boolean = false,
     val isChecked: Boolean = false,
     val isSelectionMode: Boolean = false
-)
+) : Parcelable

@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
@@ -17,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @AndroidEntryPoint
 class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_comics) {
 
@@ -62,9 +65,10 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
 
     private fun observeNavigationEvents() {
         lifecycleScope.launch {
-            viewModel.navigateToViewerEvent.collectLatest { link ->
+            viewModel.navigateToViewerEvent.collectLatest { (selectedIndex, comics) ->
                 val intent = Intent(this@ComicsActivity, WebtoonViewerActivity::class.java).apply {
-                    putExtra("link", link)
+                    putExtra("selectedIndex", selectedIndex)
+                    putParcelableArrayListExtra("comics", ArrayList(comics))
                 }
                 startActivity(intent)
             }

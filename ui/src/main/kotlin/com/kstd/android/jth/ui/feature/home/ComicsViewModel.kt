@@ -42,8 +42,14 @@ class ComicsViewModel @Inject constructor(
     private val deleteBookmarkUseCase: DeleteBookmarkUseCase
 ) : BaseViewModel(application) {
 
-    private val _navigateToViewerEvent = MutableSharedFlow<String>()
+    private val _navigateToViewerEvent = MutableSharedFlow<Pair<Int, List<ComicsItem>>>()
     val navigateToViewerEvent = _navigateToViewerEvent.asSharedFlow()
+
+    private var currentComicsList: List<ComicsItem> = emptyList()
+
+    fun updateCurrentComicsList(comics: List<ComicsItem>) {
+        currentComicsList = comics
+    }
 
     private val comicsPagingFlow = Pager(
         config = PagingConfig(
@@ -185,8 +191,10 @@ class ComicsViewModel @Inject constructor(
             }
         } else {
             viewModelScope.launch {
-                item.link?.let {
-                    _navigateToViewerEvent.emit(it)
+                val selectedIndex = currentComicsList.indexOf(item)
+                
+                if (selectedIndex != -1) {
+                    _navigateToViewerEvent.emit(selectedIndex to currentComicsList)
                 }
             }
         }

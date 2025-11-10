@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.compose.compiler)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -48,6 +49,7 @@ dependencies {
     implementation(project(":domain"))
 
     implementation(libs.androidx.paging.runtime.ktx)
+    implementation("androidx.paging:paging-compose:3.2.1")
 
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
