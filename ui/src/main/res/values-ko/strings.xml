@@ -7,5 +7,9 @@
     <string name="comics_tab_bookmark">북마크</string>
     <string name="comics_fetch_error">데이터를 불러오는데 실패했습니다. [%s] %s</string>
     <string name="comics_no_results">결과가 없습니다.</string>
+    <string name="bookmark_added">북마크가 추가되었습니다.</string>
+    <string name="bookmark_removed">북마크가 삭제되었습니다.</string>
+    <string name="bookmarks_added_count">%d개의 아이템이 북마크에 추가되었습니다.</string>
+    <string name="bookmarks_deleted_count">%d개의 아이템이 삭제되었습니다.</string>
 
 </resources>

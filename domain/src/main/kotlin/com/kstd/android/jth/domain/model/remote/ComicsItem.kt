@@ -7,5 +7,7 @@ data class ComicsItem(
     val thumbnail: String? = null,
     val sizeHeight: String? = null,
     val sizeWidth: String? = null,
-    val isBookmarked: Boolean = false
+    val isBookmarked: Boolean = false,
+    val isChecked: Boolean = false,
+    val isSelectionMode: Boolean = false
 )

@@ -2,31 +2,31 @@ package com.kstd.android.jth.data.di
 
 import android.content.Context
 import androidx.room.Room
+import com.kstd.android.jth.data.datasource.local.db.BookmarkDao
+import com.kstd.android.jth.data.datasource.local.db.BookmarkDataBase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import com.kstd.android.jth.data.datasource.local.db.ComicsDataBase
-import com.kstd.android.jth.data.datasource.local.db.ComicsDao
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 object RoomModule {
-    private const val NAME = "comics.db"
+    private const val NAME = "bookmark.db"
 
     @Provides
     @Singleton
-    fun provideComicsDao(dataBase: ComicsDataBase): ComicsDao {
-        return dataBase.comicsDao()
+    fun provideBookmarkDao(dataBase: BookmarkDataBase): BookmarkDao {
+        return dataBase.bookmarkDao()
     }
 
     @Provides
     @Singleton
-    fun provideComicsDataBase(
+    fun provideBookmarkDataBase(
         @ApplicationContext context: Context
-    ): ComicsDataBase = Room
-        .databaseBuilder(context, ComicsDataBase::class.java, NAME)
+    ): BookmarkDataBase = Room
+        .databaseBuilder(context, BookmarkDataBase::class.java, NAME)
         .build()
 }

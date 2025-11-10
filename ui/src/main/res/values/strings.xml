@@ -7,5 +7,9 @@
     <string name="comics_tab_bookmark">Bookmark</string>
     <string name="comics_fetch_error">Failed to load data. [%s] %s</string>
     <string name="comics_no_results">No results found.</string>
+    <string name="bookmark_added">Bookmark added.</string>
+    <string name="bookmark_removed">Bookmark removed.</string>
+    <string name="bookmarks_added_count">%d items added to bookmarks.</string>
+    <string name="bookmarks_deleted_count">%d items deleted.</string>
 
 </resources>

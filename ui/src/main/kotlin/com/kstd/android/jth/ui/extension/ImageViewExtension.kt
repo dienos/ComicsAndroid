@@ -1,12 +1,28 @@
 package com.kstd.android.jth.ui.extension
 
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.widget.ImageView
+import androidx.core.view.doOnPreDraw
 import androidx.databinding.BindingAdapter
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.kstd.android.jth.R
+
+private fun createProgressDrawable(imageView: ImageView): CircularProgressDrawable {
+    return CircularProgressDrawable(imageView.context).apply {
+        strokeWidth = 10f
+        centerRadius = 50f
+        start()
+    }
+}
 
 @BindingAdapter("imageUrl", "imageWidth", "imageHeight", requireAll = false)
 fun ImageView.bindImageUrl(url: String?, width: String?, height: String?) {
@@ -15,36 +31,68 @@ fun ImageView.bindImageUrl(url: String?, width: String?, height: String?) {
         return
     }
 
-    val requestOptions = RequestOptions()
-        .placeholder(R.drawable.ic_launcher_background)
+    Glide.with(context).clear(this)
+
+    val widthInt = width?.toIntOrNull()
+    val heightInt = height?.toIntOrNull()
+
+    val progressDrawable = createProgressDrawable(this)
+
+    var requestOptions = RequestOptions()
+        .placeholder(progressDrawable)
         .error(R.drawable.ic_launcher_foreground)
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
 
-    width?.toIntOrNull()?.let { widthInt ->
-        height?.toIntOrNull()?.let { heightInt ->
-            if (widthInt > 0 && heightInt > 0) {
-                requestOptions.override(widthInt, heightInt)
+    if (widthInt != null && heightInt != null && widthInt > 0 && heightInt > 0) {
+        requestOptions = requestOptions.override(widthInt, heightInt)
 
-                val viewRatio = this.height.toFloat() / this.width.toFloat()
+        doOnPreDraw { view ->
+            if (view.width > 0 && view.height > 0) {
+                val viewRatio = view.height.toFloat() / view.width.toFloat()
                 val imageRatio = heightInt.toFloat() / widthInt.toFloat()
 
-                this.scaleType = if (viewRatio > imageRatio) {
+                scaleType = if (viewRatio > imageRatio) {
                     ImageView.ScaleType.FIT_CENTER
                 } else {
                     ImageView.ScaleType.CENTER_CROP
                 }
             } else {
-                this.scaleType = ImageView.ScaleType.CENTER_CROP
+                scaleType = ImageView.ScaleType.CENTER_CROP
             }
         }
-    } ?: run {
+    } else {
         this.scaleType = ImageView.ScaleType.CENTER_CROP
     }
+
+    val thumbnailRequest = Glide.with(context)
+        .load(url)
+        .apply(RequestOptions().sizeMultiplier(0.1f))
 
     Glide.with(this.context)
         .load(url)
         .apply(requestOptions)
-        .thumbnail(0.1f)
+        .thumbnail(thumbnailRequest)
         .transition(DrawableTransitionOptions.withCrossFade())
+        .listener(object : RequestListener<Drawable> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<Drawable>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                Log.e("GlideBindingAdapter", "Image load failed for url: $url", e)
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: Drawable?,
+                model: Any?,
+                target: Target<Drawable>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
+        })
         .into(this)
 }

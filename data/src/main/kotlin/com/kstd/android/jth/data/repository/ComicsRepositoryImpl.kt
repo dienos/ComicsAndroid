@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.kstd.android.jth.data.datasource.local.source.ComicsLocalSource
 import com.kstd.android.jth.data.datasource.remote.dto.ErrorResponseDto
 import com.kstd.android.jth.data.datasource.remote.source.ComicsRemoteSource
+import com.kstd.android.jth.data.mapper.toBookmarkEntity
 import com.kstd.android.jth.domain.model.ApiResult
 import com.kstd.android.jth.domain.model.local.BookmarkItem
 import com.kstd.android.jth.domain.model.remote.ComicsResponse
@@ -13,7 +14,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class FetchComicsRepositoryImpl @Inject constructor(
+class ComicsRepositoryImpl @Inject constructor(
     private val localSource: ComicsLocalSource,
     private val remoteSource: ComicsRemoteSource
 ) : ComicsRepository {
@@ -38,5 +39,13 @@ class FetchComicsRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getBookmark(): Flow<List<BookmarkItem>> = localSource.getBookmark()
+    override fun getBookmark(): Flow<List<BookmarkItem>> = localSource.getBookmarks()
+
+    override suspend fun addBookmark(items: List<BookmarkItem>) {
+        localSource.addBookmark(items.map { it.toBookmarkEntity() })
+    }
+
+    override suspend fun deleteBookmark(items: List<BookmarkItem>) {
+        localSource.deleteBookmark(items.map { it.toBookmarkEntity() })
+    }
 }

@@ -1,13 +1,19 @@
 package com.kstd.android.jth.ui.feature.home
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.kstd.android.jth.R
 import com.kstd.android.jth.databinding.ActivityComicsBinding
 import com.kstd.android.jth.ui.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_comics) {
@@ -20,6 +26,7 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
         setupNavigation()
         observeLoadingState(viewModel)
         observeToastEvents(viewModel)
+        observeUiState()
     }
 
     private fun setupNavigation() {
@@ -27,7 +34,58 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
         val navController = navHostFragment.navController
 
         binding.bottomNavigation.setupWithNavController(navController)
+        binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
+            viewModel.onTabSelected(menuItem.itemId)
+            NavigationUI.onNavDestinationSelected(menuItem, navController)
+            true
+        }
+
         setSupportActionBar(binding.topAppBar)
         binding.topAppBar.setupWithNavController(navController)
+    }
+
+    private fun observeUiState() {
+        lifecycleScope.launch {
+            viewModel.isBookmarkDeleteMode.collectLatest {
+                invalidateOptionsMenu()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.isHomeSelectionMode.collectLatest {
+                invalidateOptionsMenu()
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        when {
+            viewModel.isBookmarkDeleteMode.value -> {
+                menuInflater.inflate(R.menu.bookmark_selection_menu, menu)
+                return true
+            }
+            viewModel.isHomeSelectionMode.value -> {
+                menuInflater.inflate(R.menu.home_selection_menu, menu)
+                return true
+            }
+            else -> return false
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_delete -> {
+                viewModel.onDeleteBookmarksClick()
+                true
+            }
+            R.id.action_add_bookmark -> {
+                viewModel.onAddBookmarksClick()
+                true
+            }
+            R.id.action_cancel -> {
+                viewModel.cancelSelectionMode()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

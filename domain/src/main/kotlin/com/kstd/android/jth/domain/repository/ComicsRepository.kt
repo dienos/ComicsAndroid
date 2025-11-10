@@ -9,4 +9,8 @@ interface ComicsRepository {
     suspend fun fetchComics(page: Int, size: Int): ApiResult<ComicsResponse>
 
     fun getBookmark(): Flow<List<BookmarkItem>>
+
+    suspend fun addBookmark(items: List<BookmarkItem>)
+
+    suspend fun deleteBookmark(items: List<BookmarkItem>)
 }

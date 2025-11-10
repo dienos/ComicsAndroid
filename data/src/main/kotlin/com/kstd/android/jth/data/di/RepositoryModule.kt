@@ -1,6 +1,6 @@
 package com.kstd.android.jth.data.di
 
-import com.kstd.android.jth.data.repository.FetchComicsRepositoryImpl
+import com.kstd.android.jth.data.repository.ComicsRepositoryImpl
 import com.kstd.android.jth.domain.repository.ComicsRepository
 import dagger.Binds
 import dagger.Module
@@ -15,6 +15,6 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindComicsRepository(
-        comicsRepositoryImpl: FetchComicsRepositoryImpl
+        comicsRepositoryImpl: ComicsRepositoryImpl
     ): ComicsRepository
 }

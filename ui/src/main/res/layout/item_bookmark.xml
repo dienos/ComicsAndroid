@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
         <variable
             name="item"
-            type="com.kstd.android.jth.domain.model.remote.ComicsItem" />
+            type="com.kstd.android.jth.domain.model.local.BookmarkItem" />
         <variable
             name="viewModel"
             type="com.kstd.android.jth.ui.feature.home.ComicsViewModel" />
@@ -17,23 +17,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:onClick="@{() -> viewModel.onHomeItemClick(item)}"
-        android:onLongClick="@{() -> viewModel.onHomeItemLongClick(item)}"
+        android:onClick="@{() -> viewModel.onBookmarkItemClick(item)}"
+        android:onLongClick="@{() -> viewModel.onBookmarkItemLongClick(item)}"
         app:cardCornerRadius="8dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="140dp">
 
+            <CheckBox
+                android:id="@+id/cb_bookmark_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:checked="@{viewModel.checkedBookmarkItems.contains(item.link)}"
+                android:visibility="@{viewModel.isBookmarkDeleteMode ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
                 android:id="@+id/iv_thumbnail"
                 android:layout_width="100dp"
                 android:layout_height="0dp"
+                android:scaleType="centerCrop"
                 app:imageUrl="@{item.thumbnail}"
                 app:imageWidth="@{item.sizeWidth}"
                 app:imageHeight="@{item.sizeHeight}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cb_bookmark_select"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
@@ -42,42 +54,16 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="16dp"
                 android:gravity="center_vertical"
                 android:text="@{item.title}"
                 android:maxLines="3"
                 android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tb_bookmark"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_thumbnail"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Comic Title Goes Here" />
-
-            <ToggleButton
-                android:id="@+id/tb_bookmark"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="8dp"
-                android:background="@android:drawable/btn_star"
-                android:checked="@{item.isBookmarked}"
-                android:onClick="@{() -> viewModel.onSingleBookmarkClick(item)}"
-                android:visibility="@{!viewModel.isHomeSelectionMode ? View.VISIBLE : View.GONE}"
-                android:textOff=""
-                android:textOn=""
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <CheckBox
-                android:id="@+id/cb_home_select"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="8dp"
-                android:checked="@{viewModel.checkedHomeItems.containsKey(item.link)}"
-                android:visibility="@{viewModel.isHomeSelectionMode ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                tools:text="Bookmark Title Goes Here" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

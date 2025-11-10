@@ -39,26 +39,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun setupSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.refresh()
+            comicsAdapter.refresh()
         }
     }
 
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.isRefreshing.collectLatest {
-                binding.swipeRefreshLayout.isRefreshing = it
-            }
-        }
-        
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.refreshEvent.collectLatest {
-                comicsAdapter.refresh()
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
             comicsAdapter.loadStateFlow.collectLatest { loadStates ->
-                viewModel.setLoading(loadStates.refresh is LoadState.Loading)
+                val isRefreshing = loadStates.refresh is LoadState.Loading
+                binding.swipeRefreshLayout.isRefreshing = isRefreshing
+                viewModel.setLoading(isRefreshing)
             }
         }
     }

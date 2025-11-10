@@ -1,6 +1,8 @@
 package com.kstd.android.jth.ui.di
 
 import com.kstd.android.jth.domain.repository.ComicsRepository
+import com.kstd.android.jth.domain.usecase.AddBookMarkUseCase
+import com.kstd.android.jth.domain.usecase.DeleteBookmarkUseCase
 import com.kstd.android.jth.domain.usecase.FetchComicsUseCase
 import com.kstd.android.jth.domain.usecase.GetBookMarkUseCase
 import dagger.Module
@@ -13,12 +15,22 @@ import dagger.hilt.android.components.ViewModelComponent
 object UseCaseModule {
 
     @Provides
-    fun providesGetSampleUseCase(repository: ComicsRepository): FetchComicsUseCase {
+    fun providesFetchComicsUseCase(repository: ComicsRepository): FetchComicsUseCase {
         return FetchComicsUseCase(repository)
     }
 
     @Provides
-    fun providesGetLocalSampleUseCase(repository: ComicsRepository): GetBookMarkUseCase {
+    fun providesGetBookMarkUseCase(repository: ComicsRepository): GetBookMarkUseCase {
         return GetBookMarkUseCase(repository)
+    }
+
+    @Provides
+    fun providesAddBookMarkUseCase(repository: ComicsRepository): AddBookMarkUseCase {
+        return AddBookMarkUseCase(repository)
+    }
+
+    @Provides
+    fun providesDeleteBookMarkUseCase(repository: ComicsRepository): DeleteBookmarkUseCase {
+        return DeleteBookmarkUseCase(repository)
     }
 }
