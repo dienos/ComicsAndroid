@@ -15,6 +15,7 @@ import com.kstd.android.jth.domain.usecase.DeleteBookmarkUseCase
 import com.kstd.android.jth.domain.usecase.GetBookMarkUseCase
 import com.kstd.android.jth.domain.usecase.FetchComicsUseCase
 import com.kstd.android.jth.ui.base.BaseViewModel
+import com.kstd.android.jth.ui.extension.getImageFilterByResolution
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -66,7 +67,7 @@ class ComicsViewModel @Inject constructor(
                 },
                 onError = { message ->
                     showToast(message)
-                }
+                }, filter = application.getImageFilterByResolution()
             )
         }
     ).flow.cachedIn(viewModelScope)
@@ -100,7 +101,7 @@ class ComicsViewModel @Inject constructor(
             comicItem.copy(
                 isBookmarked = bookmarkedLinks.contains(comicItem.link),
                 isSelectionMode = isSelectionMode,
-                isChecked =  checkedHomeItems.value.contains(comicItem.link),
+                isChecked = checkedHomeItems.value.contains(comicItem.link),
             )
         }
     }
@@ -123,7 +124,13 @@ class ComicsViewModel @Inject constructor(
 
     fun onSingleBookmarkClick(item: ComicsItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bookmarkItem = BookmarkItem(title = item.title ?: "", thumbnail = item.thumbnail ?: "", link = item.link ?: "", sizeHeight = item.sizeHeight ?: "", sizeWidth = item.sizeWidth ?: "")
+            val bookmarkItem = BookmarkItem(
+                title = item.title ?: "",
+                thumbnail = item.thumbnail ?: "",
+                link = item.link ?: "",
+                sizeHeight = item.sizeHeight ?: "",
+                sizeWidth = item.sizeWidth ?: ""
+            )
             if (item.isBookmarked) {
                 deleteBookmarkUseCase(listOf(bookmarkItem))
                 showToast(getApplication<Application>().getString(R.string.bookmark_removed))
@@ -148,22 +155,33 @@ class ComicsViewModel @Inject constructor(
 
             if (itemsToBookmark.isNotEmpty()) {
                 addBookmarkUseCase(itemsToBookmark)
-                showToast(getApplication<Application>().getString(R.string.bookmarks_added_count, itemsToBookmark.size))
+                showToast(
+                    getApplication<Application>().getString(
+                        R.string.bookmarks_added_count,
+                        itemsToBookmark.size
+                    )
+                )
             }
-            
+
             cancelHomeSelectionMode()
         }
     }
 
     fun onDeleteBookmarksClick() {
         viewModelScope.launch(Dispatchers.IO) {
-            val itemsToDelete = rawBookmarksFlow.value.filter { _checkedBookmarkItems.value.contains(it.link) }
-            
+            val itemsToDelete =
+                rawBookmarksFlow.value.filter { _checkedBookmarkItems.value.contains(it.link) }
+
             if (itemsToDelete.isNotEmpty()) {
                 deleteBookmarkUseCase(itemsToDelete)
-                showToast(getApplication<Application>().getString(R.string.bookmarks_deleted_count, itemsToDelete.size))
+                showToast(
+                    getApplication<Application>().getString(
+                        R.string.bookmarks_deleted_count,
+                        itemsToDelete.size
+                    )
+                )
             }
-            
+
             cancelSelectionMode()
         }
     }
@@ -192,7 +210,7 @@ class ComicsViewModel @Inject constructor(
         } else {
             viewModelScope.launch {
                 val selectedIndex = currentComicsList.indexOf(item)
-                
+
                 if (selectedIndex != -1) {
                     _navigateToViewerEvent.emit(selectedIndex to currentComicsList)
                 }

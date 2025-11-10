@@ -19,9 +19,13 @@ class ComicsRepositoryImpl @Inject constructor(
     private val remoteSource: ComicsRemoteSource
 ) : ComicsRepository {
 
-    override suspend fun fetchComics(page: Int, size: Int): ApiResult<ComicsResponse> {
+    override suspend fun fetchComics(
+        page: Int,
+        size: Int?,
+        filter: String?
+    ): ApiResult<ComicsResponse> {
         return try {
-            val response = remoteSource.fetchComics(page, size)
+            val response = remoteSource.fetchComics(page, size, filter)
             ApiResult.Success(response)
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()

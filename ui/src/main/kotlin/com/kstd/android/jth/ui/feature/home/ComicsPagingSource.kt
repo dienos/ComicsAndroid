@@ -15,7 +15,8 @@ private const val TAG = "ComicsPagingSource"
 class ComicsPagingSource(
     private val fetchComicsUseCase: FetchComicsUseCase,
     private val onError: (String) -> Unit,
-    private val onEmpty: () -> Unit
+    private val onEmpty: () -> Unit,
+    private val filter: String,
 ) : PagingSource<Int, ComicsItem>() {
 
     companion object {
@@ -26,7 +27,8 @@ class ComicsPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ComicsItem> {
         val start = params.key ?: STARTING_INDEX
 
-        return when (val result = fetchComicsUseCase(page = start, size = PAGE_SIZE)) {
+        return when (val result =
+            fetchComicsUseCase(page = start, size = PAGE_SIZE, filter = filter)) {
             is ApiResult.Success -> {
                 val comics = result.data.items
 
@@ -36,7 +38,7 @@ class ComicsPagingSource(
                     }
                 }
 
-                comics.forEachIndexed { index, item -> 
+                comics.forEachIndexed { index, item ->
                     val overallIndex = start + index
                     Log.d(TAG, "Item[$overallIndex]: ${item.title}")
                 }
@@ -46,13 +48,14 @@ class ComicsPagingSource(
                 } else {
                     start + comics.size
                 }
-                
+
                 LoadResult.Page(
                     data = comics,
                     prevKey = if (start == STARTING_INDEX) null else start - PAGE_SIZE,
                     nextKey = nextKey
                 )
             }
+
             is ApiResult.Error -> {
                 val errorMessage = "[${result.code}] ${result.message}"
                 Log.e(TAG, "Error loading from start index $start: $errorMessage")

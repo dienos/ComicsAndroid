@@ -59,6 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:onClick="@{() -> viewModel.onBookmarkItemClick(item)}"
                 android:checked="@{item.isSelected}"
                 android:visibility="@{item.isSelectionMode ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.ui.base.BaseViewModel
+import com.kstd.android.jth.ui.extension.preloadWebtoonImages
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WebtoonViewerViewModel @Inject constructor(
-    application: Application
+    private val application: Application
 ) : BaseViewModel(application) {
 
     private val _webtoonFlow = MutableStateFlow<Flow<PagingData<ComicsItem>>?>(null)
@@ -33,9 +34,15 @@ class WebtoonViewerViewModel @Inject constructor(
         _initialIndex.value = index
         if (comics.isNotEmpty()) {
             _title.value = comics[index].title ?: ""
+            preloadWebtoonImages(application.applicationContext, comics, viewModelScope)
         }
+
         _webtoonFlow.value = Pager(
-            config = PagingConfig(pageSize = 30),
+            config = PagingConfig(
+                pageSize = 30,
+                prefetchDistance = 5,
+                initialLoadSize = 30
+            ),
             pagingSourceFactory = { WebtoonPagingSource(comics) }
         ).flow.cachedIn(viewModelScope)
     }

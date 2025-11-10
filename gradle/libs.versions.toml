@@ -18,7 +18,7 @@ swiperefreshlayout = "1.1.0"
 compose-bom = "2024.04.01"
 
 # Room
-room = "2.4.2"
+room = "2.8.3"
 
 # Hilt
 hilt = "2.57.2"

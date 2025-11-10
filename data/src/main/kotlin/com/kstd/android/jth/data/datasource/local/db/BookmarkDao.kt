@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface BookmarkDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(bookmarks: List<BookmarkEntity>)
+    suspend fun insert(bookmarks: List<BookmarkEntity>)
 
     @Delete
-    fun delete(bookmarks: List<BookmarkEntity>)
+    suspend fun delete(bookmarks: List<BookmarkEntity>)
 
     @Query("SELECT * FROM bookmarks")
     fun getBookmarks(): Flow<List<BookmarkEntity>>

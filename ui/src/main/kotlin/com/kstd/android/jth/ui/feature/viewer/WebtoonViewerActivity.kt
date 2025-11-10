@@ -91,7 +91,7 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()
-            ) { 
+            ) {
                 items(lazyPagingItems.itemCount) { index ->
                     lazyPagingItems[index]?.let { item ->
                         val imageWidth = item.sizeWidth?.toIntOrNull()
@@ -99,7 +99,8 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
 
                         var itemModifier = Modifier.fillMaxWidth()
                         if (imageWidth != null && imageHeight != null && imageWidth > 0 && imageHeight > 0) {
-                            itemModifier = itemModifier.aspectRatio(imageWidth.toFloat() / imageHeight.toFloat())
+                            itemModifier =
+                                itemModifier.aspectRatio(imageWidth.toFloat() / imageHeight.toFloat())
                         }
 
                         AndroidView(

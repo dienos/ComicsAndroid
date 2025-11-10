@@ -4,10 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
         <variable
             name="item"
             type="com.kstd.android.jth.domain.model.remote.ComicsItem" />
+
         <variable
             name="viewModel"
             type="com.kstd.android.jth.ui.feature.home.ComicsViewModel" />
@@ -29,9 +32,9 @@
                 android:id="@+id/iv_thumbnail"
                 android:layout_width="100dp"
                 android:layout_height="0dp"
+                app:imageHeight="@{item.sizeHeight}"
                 app:imageUrl="@{item.thumbnail}"
                 app:imageWidth="@{item.sizeWidth}"
-                app:imageHeight="@{item.sizeHeight}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -43,10 +46,10 @@
                 android:layout_height="0dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="8dp"
-                android:gravity="center_vertical"
-                android:text="@{item.title}"
-                android:maxLines="3"
                 android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="3"
+                android:text="@{item.title}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/tb_bookmark"
                 app:layout_constraintStart_toEndOf="@+id/iv_thumbnail"
@@ -61,9 +64,9 @@
                 android:background="@android:drawable/btn_star"
                 android:checked="@{item.isBookmarked}"
                 android:onClick="@{() -> viewModel.onSingleBookmarkClick(item)}"
-                android:visibility="@{!viewModel.isHomeSelectionMode ? View.VISIBLE : View.GONE}"
                 android:textOff=""
                 android:textOn=""
+                android:visibility="@{!viewModel.isHomeSelectionMode ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -73,8 +76,9 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginEnd="8dp"
+                android:onClick="@{() -> viewModel.onHomeItemClick(item)}"
                 android:checked="@{item.isChecked}"
-                android:visibility="@{viewModel.isHomeSelectionMode ? View.VISIBLE : View.GONE}"
+                android:visibility="@{viewModel.isHomeSelectionMode &amp;&amp; !item.isBookmarked ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

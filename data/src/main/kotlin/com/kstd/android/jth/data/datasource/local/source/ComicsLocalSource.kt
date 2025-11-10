@@ -10,8 +10,8 @@ import javax.inject.Inject
 
 interface ComicsLocalSource {
     fun getBookmarks(): Flow<List<BookmarkItem>>
-    fun addBookmark(bookmarks: List<BookmarkEntity>)
-    fun deleteBookmark(bookmarks: List<BookmarkEntity>)
+    suspend fun addBookmark(bookmarks: List<BookmarkEntity>)
+    suspend fun deleteBookmark(bookmarks: List<BookmarkEntity>)
 }
 
 class ComicsLocalSourceImpl @Inject constructor(
@@ -22,11 +22,11 @@ class ComicsLocalSourceImpl @Inject constructor(
         it.toBookmarkItems()
     }
 
-    override fun addBookmark(bookmarks: List<BookmarkEntity>) {
+    override suspend fun addBookmark(bookmarks: List<BookmarkEntity>) {
         bookmarkDao.insert(bookmarks)
     }
 
-    override fun deleteBookmark(bookmarks: List<BookmarkEntity>) {
+    override suspend fun deleteBookmark(bookmarks: List<BookmarkEntity>) {
         bookmarkDao.delete(bookmarks)
     }
 }

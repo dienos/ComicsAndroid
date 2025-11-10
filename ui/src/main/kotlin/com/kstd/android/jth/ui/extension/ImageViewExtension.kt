@@ -1,5 +1,7 @@
 package com.kstd.android.jth.ui.extension
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.widget.ImageView
@@ -8,13 +10,32 @@ import androidx.databinding.BindingAdapter
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.kstd.android.jth.R
+import com.kstd.android.jth.domain.model.remote.ComicsItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+fun preloadWebtoonImages(context: Context, comics: List<ComicsItem>, scope: CoroutineScope) {
+    scope.launch(Dispatchers.IO) {
+        comics.forEach { item ->
+            item.link?.let {
+                Glide.with(context)
+                    .downloadOnly()
+                    .load(it)
+                    .submit()
+            }
+        }
+    }
+}
 
 private fun createProgressDrawable(imageView: ImageView): CircularProgressDrawable {
     return CircularProgressDrawable(imageView.context).apply {
@@ -60,14 +81,15 @@ private fun ImageView.executeGlide(url: String, requestOptions: RequestOptions) 
 
 private fun ImageView.executeGlideForWebtoon(url: String, requestOptions: RequestOptions) {
     Glide.with(this.context)
+        .asBitmap()
         .load(url)
         .apply(requestOptions)
-        .transition(DrawableTransitionOptions.withCrossFade())
-        .listener(object : RequestListener<Drawable> {
+        .transition(BitmapTransitionOptions.withCrossFade())
+        .listener(object : RequestListener<Bitmap> {
             override fun onLoadFailed(
                 e: GlideException?,
                 model: Any?,
-                target: Target<Drawable>?,
+                target: Target<Bitmap>?,
                 isFirstResource: Boolean
             ): Boolean {
                 Log.e("GlideBindingAdapter", "Image load failed for url: $url", e)
@@ -75,9 +97,9 @@ private fun ImageView.executeGlideForWebtoon(url: String, requestOptions: Reques
             }
 
             override fun onResourceReady(
-                resource: Drawable?,
+                resource: Bitmap?,
                 model: Any?,
-                target: Target<Drawable>?,
+                target: Target<Bitmap>?,
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
@@ -88,12 +110,11 @@ private fun ImageView.executeGlideForWebtoon(url: String, requestOptions: Reques
 }
 
 private fun ImageView.prepareWebtoonRequestOptions(): RequestOptions {
-    val progressDrawable = createProgressDrawable(this)
     this.scaleType = ImageView.ScaleType.CENTER_CROP
     return RequestOptions()
-        .placeholder(progressDrawable)
         .error(R.drawable.ic_launcher_foreground)
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+        .format(DecodeFormat.PREFER_RGB_565)
 }
 
 private fun ImageView.prepareRequestOptions(
