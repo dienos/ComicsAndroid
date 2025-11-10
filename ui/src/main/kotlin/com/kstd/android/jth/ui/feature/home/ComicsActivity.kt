@@ -1,5 +1,6 @@
 package com.kstd.android.jth.ui.feature.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -11,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.kstd.android.jth.R
 import com.kstd.android.jth.databinding.ActivityComicsBinding
 import com.kstd.android.jth.ui.base.BaseActivity
+import com.kstd.android.jth.ui.feature.viewer.WebtoonViewerActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,6 +29,7 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
         observeLoadingState(viewModel)
         observeToastEvents(viewModel)
         observeUiState()
+        observeNavigationEvents()
     }
 
     private fun setupNavigation() {
@@ -53,6 +56,17 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
         lifecycleScope.launch {
             viewModel.isHomeSelectionMode.collectLatest {
                 invalidateOptionsMenu()
+            }
+        }
+    }
+
+    private fun observeNavigationEvents() {
+        lifecycleScope.launch {
+            viewModel.navigateToViewerEvent.collectLatest { link ->
+                val intent = Intent(this@ComicsActivity, WebtoonViewerActivity::class.java).apply {
+                    putExtra("link", link)
+                }
+                startActivity(intent)
             }
         }
     }

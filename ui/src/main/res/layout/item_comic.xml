@@ -73,7 +73,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginEnd="8dp"
-                android:checked="@{viewModel.checkedHomeItems.containsKey(item.link)}"
+                android:checked="@{item.isChecked}"
                 android:visibility="@{viewModel.isHomeSelectionMode ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

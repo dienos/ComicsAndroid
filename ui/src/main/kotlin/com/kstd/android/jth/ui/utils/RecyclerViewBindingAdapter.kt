@@ -10,7 +10,6 @@ import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.ui.feature.bookmark.BookmarkAdapter
 import com.kstd.android.jth.ui.feature.home.ComicsAdapter
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -26,7 +25,7 @@ fun RecyclerView.bindPagingItems(pagingDataFlow: Flow<PagingData<ComicsItem>>?) 
 }
 
 @BindingAdapter("bookmarkItems")
-fun RecyclerView.bindBookmarkItems(itemsFlow: StateFlow<List<BookmarkItem>>?) {
+fun RecyclerView.bindBookmarkItems(itemsFlow: Flow<List<BookmarkItem>>?) {
     val adapter = this.adapter as? BookmarkAdapter ?: return
 
     findViewTreeLifecycleOwner()?.lifecycleScope?.launch {

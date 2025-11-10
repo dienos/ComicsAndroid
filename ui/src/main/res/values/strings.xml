@@ -11,5 +11,6 @@
     <string name="bookmark_removed">Bookmark removed.</string>
     <string name="bookmarks_added_count">%d items added to bookmarks.</string>
     <string name="bookmarks_deleted_count">%d items deleted.</string>
+    <string name="bookmark_empty">No bookmarked items found.</string>
 
 </resources>

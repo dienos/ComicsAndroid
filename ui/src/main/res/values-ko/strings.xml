@@ -11,5 +11,6 @@
     <string name="bookmark_removed">북마크가 삭제되었습니다.</string>
     <string name="bookmarks_added_count">%d개의 아이템이 북마크에 추가되었습니다.</string>
     <string name="bookmarks_deleted_count">%d개의 아이템이 삭제되었습니다.</string>
+    <string name="bookmark_empty">북마크된 웹툰이 없습니다.</string>
 
 </resources>

@@ -2,6 +2,7 @@ package com.kstd.android.jth.ui.feature.bookmark
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.kstd.android.jth.R
@@ -46,6 +47,14 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(R.layout.fragment
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isRefreshing.collectLatest {
                 binding.swipeRefreshLayout.isRefreshing = it
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.bookmarksFlow.collectLatest { bookmarks ->
+                val isEmpty = bookmarks.isEmpty()
+                binding.rvBookmarkFragment.isVisible = !isEmpty
+                binding.tvEmptyBookmark.isVisible = isEmpty
             }
         }
     }

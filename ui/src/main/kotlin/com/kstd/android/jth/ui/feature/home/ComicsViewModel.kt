@@ -15,15 +15,16 @@ import com.kstd.android.jth.domain.usecase.DeleteBookmarkUseCase
 import com.kstd.android.jth.domain.usecase.GetBookMarkUseCase
 import com.kstd.android.jth.domain.usecase.FetchComicsUseCase
 import com.kstd.android.jth.ui.base.BaseViewModel
-import com.kstd.android.jth.ui.feature.bookmark.SelectableBookmarkItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -40,6 +41,9 @@ class ComicsViewModel @Inject constructor(
     private val addBookmarkUseCase: AddBookMarkUseCase,
     private val deleteBookmarkUseCase: DeleteBookmarkUseCase
 ) : BaseViewModel(application) {
+
+    private val _navigateToViewerEvent = MutableSharedFlow<String>()
+    val navigateToViewerEvent = _navigateToViewerEvent.asSharedFlow()
 
     private val comicsPagingFlow = Pager(
         config = PagingConfig(
@@ -61,7 +65,7 @@ class ComicsViewModel @Inject constructor(
         }
     ).flow.cachedIn(viewModelScope)
 
-    val bookmarksFlow: StateFlow<List<BookmarkItem>> = getBookmarkUseCase().stateIn(
+    private val rawBookmarksFlow: StateFlow<List<BookmarkItem>> = getBookmarkUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
@@ -81,7 +85,7 @@ class ComicsViewModel @Inject constructor(
 
     val comicsFlow: Flow<PagingData<ComicsItem>> = combine(
         comicsPagingFlow,
-        bookmarksFlow,
+        rawBookmarksFlow,
         isHomeSelectionMode,
         checkedHomeItems
     ) { pagingData, bookmarks, isSelectionMode, _ ->
@@ -89,7 +93,21 @@ class ComicsViewModel @Inject constructor(
         pagingData.map { comicItem ->
             comicItem.copy(
                 isBookmarked = bookmarkedLinks.contains(comicItem.link),
-                isSelectionMode = isSelectionMode
+                isSelectionMode = isSelectionMode,
+                isChecked =  checkedHomeItems.value.contains(comicItem.link),
+            )
+        }
+    }
+
+    val bookmarksFlow: Flow<List<BookmarkItem>> = combine(
+        rawBookmarksFlow,
+        isBookmarkDeleteMode,
+        checkedBookmarkItems
+    ) { bookmarks, isSelectionMode, checkedItems ->
+        bookmarks.map {
+            it.copy(
+                isSelectionMode = isSelectionMode,
+                isSelected = checkedItems.contains(it.link)
             )
         }
     }
@@ -133,8 +151,7 @@ class ComicsViewModel @Inject constructor(
 
     fun onDeleteBookmarksClick() {
         viewModelScope.launch(Dispatchers.IO) {
-            val linksToDelete = _checkedBookmarkItems.value
-            val itemsToDelete = bookmarksFlow.value.filter { linksToDelete.contains(it.link) }
+            val itemsToDelete = rawBookmarksFlow.value.filter { _checkedBookmarkItems.value.contains(it.link) }
             
             if (itemsToDelete.isNotEmpty()) {
                 deleteBookmarkUseCase(itemsToDelete)
@@ -167,7 +184,11 @@ class ComicsViewModel @Inject constructor(
                 }
             }
         } else {
-            // TODO: 상세 화면 이동
+            viewModelScope.launch {
+                item.link?.let {
+                    _navigateToViewerEvent.emit(it)
+                }
+            }
         }
     }
 
@@ -179,9 +200,9 @@ class ComicsViewModel @Inject constructor(
         if (_isBookmarkDeleteMode.value) {
             _checkedBookmarkItems.update {
                 if (it.contains(item.link)) {
-                    it - (item.link ?: "")
+                    it - item.link
                 } else {
-                    it + (item.link ?: "")
+                    it + item.link
                 }
             }
         }
@@ -190,7 +211,7 @@ class ComicsViewModel @Inject constructor(
     fun onBookmarkItemLongClick(item: BookmarkItem): Boolean {
         if (!_isBookmarkDeleteMode.value) {
             _isBookmarkDeleteMode.value = true
-            _checkedBookmarkItems.update { it + (item.link ?: "") }
+            _checkedBookmarkItems.update { it + item.link }
             cancelHomeSelectionMode()
         }
         return true
