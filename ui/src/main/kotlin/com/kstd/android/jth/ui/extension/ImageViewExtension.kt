@@ -23,10 +23,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-fun preloadWebtoonImages(context: Context, comics: List<ComicsItem>, scope: CoroutineScope) {
+fun preloadWebtoonImages(context: Context, comicsToPreload: List<ComicsItem>, scope: CoroutineScope) {
     scope.launch(Dispatchers.IO) {
         val screenWidth = context.resources.displayMetrics.widthPixels
-        comics.forEach { item ->
+
+        comicsToPreload.forEach { item ->
             item.link?.let { url ->
                 val imageWidth = item.sizeWidth?.toIntOrNull()
                 val imageHeight = item.sizeHeight?.toIntOrNull()
@@ -36,7 +37,7 @@ fun preloadWebtoonImages(context: Context, comics: List<ComicsItem>, scope: Coro
                     .load(url)
                     .apply(
                         RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                             .format(DecodeFormat.PREFER_ARGB_8888)
                     )
 
@@ -62,7 +63,7 @@ private fun createProgressDrawable(imageView: ImageView): CircularProgressDrawab
 private fun ImageView.executeGlide(url: String, requestOptions: RequestOptions, listener: RequestListener<Drawable>) {
     val thumbnailRequest = Glide.with(context)
         .load(url)
-        .apply(RequestOptions().sizeMultiplier(0.1f))
+        .apply(RequestOptions().sizeMultiplier(0.9f))
 
     Glide.with(this.context)
         .load(url)
@@ -74,10 +75,16 @@ private fun ImageView.executeGlide(url: String, requestOptions: RequestOptions, 
 }
 
 private fun ImageView.executeGlideForWebtoon(url: String, requestOptions: RequestOptions) {
+    val thumbnailRequest = Glide.with(this.context)
+        .asBitmap()
+        .load(url)
+        .apply(RequestOptions().sizeMultiplier(0.1f))
+
     Glide.with(this.context)
         .asBitmap()
         .load(url)
         .apply(requestOptions)
+        .thumbnail(thumbnailRequest)
         .transition(BitmapTransitionOptions.withCrossFade())
         .listener(object : RequestListener<Bitmap> {
             override fun onLoadFailed(
@@ -87,7 +94,14 @@ private fun ImageView.executeGlideForWebtoon(url: String, requestOptions: Reques
                 isFirstResource: Boolean
             ): Boolean {
                 Log.e("GlideBindingAdapter", "Image load failed for url: $url", e)
-                return false
+
+                this@executeGlideForWebtoon.setImageResource(R.drawable.ic_launcher_foreground)
+
+                this@executeGlideForWebtoon.setOnClickListener {
+                    this@executeGlideForWebtoon.setOnClickListener(null)
+                    this@executeGlideForWebtoon.loadAsWebtoon(url)
+                }
+                return true
             }
 
             override fun onResourceReady(
@@ -97,6 +111,7 @@ private fun ImageView.executeGlideForWebtoon(url: String, requestOptions: Reques
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
+                this@executeGlideForWebtoon.setOnClickListener(null)
                 Log.d("Glide", "Image for $url loaded from: $dataSource")
                 return false
             }
@@ -107,7 +122,7 @@ private fun ImageView.executeGlideForWebtoon(url: String, requestOptions: Reques
 private fun ImageView.prepareWebtoonRequestOptions(): RequestOptions {
     return RequestOptions()
         .error(R.drawable.ic_launcher_foreground)
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
         .format(DecodeFormat.PREFER_ARGB_8888)
 }
 
@@ -115,6 +130,8 @@ private fun ImageView.prepareRequestOptions(
     width: String,
     height: String,
     defaultScaleType: ImageView.ScaleType
+
+
 ): RequestOptions {
     val progressDrawable = createProgressDrawable(this)
     var requestOptions = RequestOptions()
@@ -169,7 +186,7 @@ fun ImageView.bindImageUrl(url: String?, width: String?, height: String?) {
         override fun onResourceReady(
             resource: Drawable?,
             model: Any?,
-            target: Target<Drawable>,
+            target: Target<Drawable>?,
             dataSource: DataSource?,
             isFirstResource: Boolean
         ): Boolean {

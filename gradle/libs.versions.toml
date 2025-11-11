@@ -1,4 +1,7 @@
 [versions]
+# Lottie
+lottie = "6.7.1"
+
 # Kotlin / Gradle
 kotlin = "2.2.21"
 kapt = "2.2.21"
@@ -118,6 +121,9 @@ play-services-location = { module = "com.google.android.gms:play-services-locati
 ### Glide ###
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+
+### Lottie ###
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 ### Otto ###
 otto = { module = "com.squareup:otto", version.ref = "otto" }

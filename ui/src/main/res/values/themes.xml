@@ -16,8 +16,8 @@
 
     <!-- Splash Screen Theme -->
     <style name="Theme.KSTDAndroidJTH.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@android:color/white</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/transparent_drawable</item>
         <item name="postSplashScreenTheme">@style/Theme.KSTDAndroidJTH</item>
     </style>
 </resources>

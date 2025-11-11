@@ -33,8 +33,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun setupRecyclerView() {
-        binding.rvComicsFragment.setHasFixedSize(true)
-        binding.rvComicsFragment.adapter = comicsAdapter
+        binding.rvComicsFragment.apply {
+            setHasFixedSize(true)
+            setItemViewCacheSize(10)
+            adapter = comicsAdapter
+        }
 
         comicsAdapter.addLoadStateListener {
             viewModel.updateCurrentComicsList(comicsAdapter.snapshot().items)
