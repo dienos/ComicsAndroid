@@ -16,6 +16,7 @@ import com.kstd.android.jth.databinding.ActivityComicsBinding
 import com.kstd.android.jth.ui.base.BaseActivity
 import com.kstd.android.jth.ui.feature.search.ComicsSearchActivity
 import com.kstd.android.jth.ui.feature.viewer.WebtoonViewerActivity
+import com.kstd.android.jth.ui.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -42,7 +43,7 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
 
         binding.bottomNavigation.setupWithNavController(navController)
         binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
-            viewModel.onTabSelected(menuItem.itemId)
+            viewModel.onTabSelected()
             NavigationUI.onNavDestinationSelected(menuItem, navController)
             true
         }
@@ -68,8 +69,8 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
         lifecycleScope.launch {
             viewModel.navigateToViewerEvent.collectLatest { (selectedIndex, comics) ->
                 val intent = Intent(this@ComicsActivity, WebtoonViewerActivity::class.java).apply {
-                    putExtra("selectedIndex", selectedIndex)
-                    putParcelableArrayListExtra("comics", ArrayList(comics))
+                    putExtra(Constants.EXTRA_SELECTED_INDEX, selectedIndex)
+                    putParcelableArrayListExtra(Constants.EXTRA_COMICS_LIST, ArrayList(comics))
                 }
                 startActivity(intent)
             }
@@ -108,7 +109,10 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
                 true
             }
             R.id.action_search -> {
-                val intent = Intent(this, ComicsSearchActivity::class.java)
+                val intent = Intent(this, ComicsSearchActivity::class.java).apply {
+                    val comicsList = viewModel.currentComicsList
+                    putParcelableArrayListExtra(Constants.EXTRA_COMICS_LIST, ArrayList(comicsList))
+                }
                 startActivity(intent)
                 true
             }

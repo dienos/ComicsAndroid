@@ -46,7 +46,7 @@ class ComicsViewModel @Inject constructor(
     private val _navigateToViewerEvent = MutableSharedFlow<Pair<Int, List<ComicsItem>>>()
     val navigateToViewerEvent = _navigateToViewerEvent.asSharedFlow()
 
-    private var currentComicsList: List<ComicsItem> = emptyList()
+    var currentComicsList: List<ComicsItem> = emptyList()
 
     fun updateCurrentComicsList(comics: List<ComicsItem>) {
         currentComicsList = comics
@@ -218,7 +218,7 @@ class ComicsViewModel @Inject constructor(
         }
     }
 
-    fun onTabSelected(id: Int) {
+    fun onTabSelected() {
         cancelSelectionMode()
     }
 
@@ -233,20 +233,10 @@ class ComicsViewModel @Inject constructor(
             }
         } else {
             viewModelScope.launch {
-                val comicsListFromBookmarks = rawBookmarksFlow.value.map { bookmark ->
-                    ComicsItem(
-                        title = bookmark.title,
-                        thumbnail = bookmark.thumbnail,
-                        link = bookmark.link,
-                        sizeHeight = bookmark.sizeHeight,
-                        sizeWidth = bookmark.sizeWidth,
-                        isBookmarked = true
-                    )
-                }
-                val selectedIndex = comicsListFromBookmarks.indexOfFirst { it.link == item.link }
+                val selectedIndex = currentComicsList.indexOfFirst { it.link == item.link }
 
                 if (selectedIndex != -1) {
-                    _navigateToViewerEvent.emit(selectedIndex to comicsListFromBookmarks)
+                    _navigateToViewerEvent.emit(selectedIndex to currentComicsList)
                 }
             }
         }

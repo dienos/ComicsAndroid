@@ -28,6 +28,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.ui.extension.loadAsWebtoon
+import com.kstd.android.jth.ui.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -38,12 +39,12 @@ class WebtoonViewerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val selectedIndex = intent.getIntExtra("selectedIndex", 0)
+        val selectedIndex = intent.getIntExtra(Constants.EXTRA_SELECTED_INDEX, 0)
 
         val comics = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableArrayListExtra("comics", ComicsItem::class.java)
+            intent.getParcelableArrayListExtra(Constants.EXTRA_COMICS_LIST, ComicsItem::class.java)
         } else {
-            intent.getParcelableArrayListExtra("comics")
+            intent.getParcelableArrayListExtra(Constants.EXTRA_COMICS_LIST)
         } ?: emptyList<ComicsItem>()
 
         viewModel.setWebtoonData(comics, selectedIndex)
@@ -66,8 +67,8 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
     val lazyPagingItems: LazyPagingItems<ComicsItem>? = webtoonFlow?.collectAsLazyPagingItems()
     val lazyListState = rememberLazyListState()
 
-    LaunchedEffect(key1 = lazyPagingItems?.itemCount) {
-        if (lazyPagingItems != null && initialIndex >= 0 && lazyPagingItems.itemCount > initialIndex) {
+    LaunchedEffect(key1 = initialIndex) {
+        if (lazyPagingItems != null && initialIndex >= 0) {
             lazyListState.scrollToItem(index = initialIndex)
         }
     }

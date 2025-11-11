@@ -13,5 +13,7 @@
     <string name="bookmarks_deleted_count">%d개의 아이템이 삭제되었습니다.</string>
     <string name="bookmark_empty">북마크된 웹툰이 없습니다.</string>
     <string name="search">검색</string>
+    <string name="search_hint">제목으로 코믹스 검색</string>
+    <string name="comics_search_title">코믹스 검색</string>
 
 </resources>

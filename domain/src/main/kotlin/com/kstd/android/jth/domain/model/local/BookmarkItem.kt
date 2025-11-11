@@ -6,6 +6,6 @@ data class BookmarkItem(
     val thumbnail: String = "",
     val sizeHeight: String = "",
     val sizeWidth: String = "",
-    val isSelected: Boolean = false, // UI 상태 필드 추가
-    val isSelectionMode: Boolean = false // UI 상태 필드 추가
+    val isSelected: Boolean = false,
+    val isSelectionMode: Boolean = false
 )
