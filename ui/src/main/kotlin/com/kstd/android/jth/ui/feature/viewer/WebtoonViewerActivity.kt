@@ -6,6 +6,7 @@ import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
 import com.kstd.android.jth.domain.model.remote.ComicsItem
+import com.kstd.android.jth.ui.composable.CheckerboardBackground
 import com.kstd.android.jth.ui.extension.loadAsWebtoon
 import com.kstd.android.jth.ui.theme.ComicsAppTheme
 import com.kstd.android.jth.ui.util.Constants
@@ -97,33 +99,35 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
             )
         }
     ) { padding ->
-        LazyColumn(
-            state = lazyListState,
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-        ) {
-            itemsIndexed(webtoonItems, key = { _, item -> item.link ?: "" }) { _, item ->
-                val imageWidth = item.sizeWidth?.toIntOrNull()
-                val imageHeight = item.sizeHeight?.toIntOrNull()
+        Box(modifier = Modifier.padding(padding).fillMaxSize()) {
+            CheckerboardBackground(modifier = Modifier.fillMaxSize())
 
-                var itemModifier = Modifier.fillMaxWidth()
-                if (imageWidth != null && imageHeight != null && imageWidth > 0 && imageHeight > 0) {
-                    itemModifier =
-                        itemModifier.aspectRatio(imageWidth.toFloat() / imageHeight.toFloat())
+            LazyColumn(
+                state = lazyListState,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                itemsIndexed(webtoonItems, key = { _, item -> item.link ?: "" }) { _, item ->
+                    val imageWidth = item.sizeWidth?.toIntOrNull()
+                    val imageHeight = item.sizeHeight?.toIntOrNull()
+
+                    var itemModifier = Modifier.fillMaxWidth()
+                    if (imageWidth != null && imageHeight != null && imageWidth > 0 && imageHeight > 0) {
+                        itemModifier =
+                            itemModifier.aspectRatio(imageWidth.toFloat() / imageHeight.toFloat())
+                    }
+
+                    AndroidView(
+                        factory = { context ->
+                            ImageView(context).apply {
+                                scaleType = ImageView.ScaleType.FIT_XY
+                            }
+                        },
+                        update = { imageView ->
+                            imageView.loadAsWebtoon(url = item.link ?: "")
+                        },
+                        modifier = itemModifier
+                    )
                 }
-
-                AndroidView(
-                    factory = { context ->
-                        ImageView(context).apply {
-                            scaleType = ImageView.ScaleType.FIT_XY
-                        }
-                    },
-                    update = { imageView ->
-                        imageView.loadAsWebtoon(url = item.link ?: "")
-                    },
-                    modifier = itemModifier
-                )
             }
         }
     }
