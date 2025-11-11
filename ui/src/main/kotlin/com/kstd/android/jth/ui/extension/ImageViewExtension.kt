@@ -25,12 +25,27 @@ import kotlinx.coroutines.launch
 
 fun preloadWebtoonImages(context: Context, comics: List<ComicsItem>, scope: CoroutineScope) {
     scope.launch(Dispatchers.IO) {
+        val screenWidth = context.resources.displayMetrics.widthPixels
         comics.forEach { item ->
-            item.link?.let {
-                Glide.with(context)
-                    .downloadOnly()
-                    .load(it)
-                    .submit()
+            item.link?.let { url ->
+                val imageWidth = item.sizeWidth?.toIntOrNull()
+                val imageHeight = item.sizeHeight?.toIntOrNull()
+
+                val request = Glide.with(context)
+                    .asBitmap()
+                    .load(url)
+                    .apply(
+                        RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                            .format(DecodeFormat.PREFER_ARGB_8888)
+                    )
+
+                if (imageWidth != null && imageHeight != null && imageWidth > 0 && imageHeight > 0) {
+                    val targetHeight = (screenWidth.toFloat() / imageWidth * imageHeight).toInt()
+                    request.preload(screenWidth, targetHeight)
+                } else {
+                    request.preload()
+                }
             }
         }
     }
@@ -82,6 +97,7 @@ private fun ImageView.executeGlideForWebtoon(url: String, requestOptions: Reques
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
+                Log.d("Glide", "Image for $url loaded from: $dataSource")
                 return false
             }
         })
@@ -89,11 +105,10 @@ private fun ImageView.executeGlideForWebtoon(url: String, requestOptions: Reques
 }
 
 private fun ImageView.prepareWebtoonRequestOptions(): RequestOptions {
-    this.scaleType = ImageView.ScaleType.CENTER_CROP
     return RequestOptions()
         .error(R.drawable.ic_launcher_foreground)
-        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-        .format(DecodeFormat.PREFER_RGB_565)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .format(DecodeFormat.PREFER_ARGB_8888)
 }
 
 private fun ImageView.prepareRequestOptions(
@@ -154,7 +169,7 @@ fun ImageView.bindImageUrl(url: String?, width: String?, height: String?) {
         override fun onResourceReady(
             resource: Drawable?,
             model: Any?,
-            target: Target<Drawable>?,
+            target: Target<Drawable>,
             dataSource: DataSource?,
             isFirstResource: Boolean
         ): Boolean {

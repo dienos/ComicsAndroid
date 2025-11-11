@@ -49,6 +49,7 @@ class ComicsSearchActivity : BaseActivity<ActivityComicsSearchBinding>(R.layout.
     }
 
     private fun setupRecyclerView() {
+        binding.rvSearchComics.setHasFixedSize(true)
         binding.rvSearchComics.adapter = ComicsSearchAdapter(viewModel)
     }
 

@@ -24,10 +24,10 @@ class ComicsPagingSource(
         const val PAGE_SIZE = 50
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ComicsItem> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ComicsItem> = withContext(Dispatchers.IO) {
         val start = params.key ?: STARTING_INDEX
 
-        return when (val result =
+        return@withContext when (val result =
             fetchComicsUseCase(page = start, size = PAGE_SIZE, filter = filter)) {
             is ApiResult.Success -> {
                 val comics = result.data.items

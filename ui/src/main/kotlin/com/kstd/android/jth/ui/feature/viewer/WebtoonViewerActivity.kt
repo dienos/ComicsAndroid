@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -26,8 +25,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.ui.extension.loadAsWebtoon
+import com.kstd.android.jth.ui.theme.ComicsAppTheme
 import com.kstd.android.jth.ui.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -50,7 +52,7 @@ class WebtoonViewerActivity : ComponentActivity() {
         viewModel.setWebtoonData(comics, selectedIndex)
 
         setContent {
-            MaterialTheme {
+            ComicsAppTheme {
                 WebtoonViewerScreen(viewModel)
             }
         }
@@ -93,7 +95,11 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
                     .padding(padding)
                     .fillMaxSize()
             ) {
-                items(lazyPagingItems.itemCount) { index ->
+                items(
+                    count = lazyPagingItems.itemCount,
+                    key = lazyPagingItems.itemKey { it.link ?: "" },
+                    contentType = lazyPagingItems.itemContentType { "WebtoonImage" }
+                ) { index ->
                     lazyPagingItems[index]?.let { item ->
                         val imageWidth = item.sizeWidth?.toIntOrNull()
                         val imageHeight = item.sizeHeight?.toIntOrNull()
@@ -105,7 +111,11 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
                         }
 
                         AndroidView(
-                            factory = { context -> ImageView(context) },
+                            factory = { context ->
+                                ImageView(context).apply {
+                                    scaleType = ImageView.ScaleType.FIT_XY
+                                }
+                            },
                             update = { imageView ->
                                 imageView.loadAsWebtoon(url = item.link ?: "")
                             },

@@ -34,13 +34,16 @@ class WebtoonViewerViewModel @Inject constructor(
         _initialIndex.value = index
         if (comics.isNotEmpty()) {
             _title.value = comics[index].title ?: ""
-            preloadWebtoonImages(application.applicationContext, comics, viewModelScope)
+            val preloadStartIndex = index
+            val preloadEndIndex = (index + 15).coerceAtMost(comics.size)
+            val sublistToPreload = comics.subList(preloadStartIndex, preloadEndIndex)
+            preloadWebtoonImages(application.applicationContext, sublistToPreload, viewModelScope)
         }
 
         _webtoonFlow.value = Pager(
             config = PagingConfig(
                 pageSize = 30,
-                prefetchDistance = 5,
+                prefetchDistance = 10,
                 initialLoadSize = 30
             ),
             pagingSourceFactory = { WebtoonPagingSource(comics) }

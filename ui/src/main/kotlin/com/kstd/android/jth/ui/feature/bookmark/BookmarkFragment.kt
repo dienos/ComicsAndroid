@@ -34,6 +34,7 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(R.layout.fragment
     }
 
     private fun setupRecyclerView() {
+        binding.rvBookmarkFragment.setHasFixedSize(true)
         binding.rvBookmarkFragment.adapter = bookmarkAdapter
     }
 
