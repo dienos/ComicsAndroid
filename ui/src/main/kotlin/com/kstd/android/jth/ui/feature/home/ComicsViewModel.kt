@@ -231,6 +231,24 @@ class ComicsViewModel @Inject constructor(
                     it + item.link
                 }
             }
+        } else {
+            viewModelScope.launch {
+                val comicsListFromBookmarks = rawBookmarksFlow.value.map { bookmark ->
+                    ComicsItem(
+                        title = bookmark.title,
+                        thumbnail = bookmark.thumbnail,
+                        link = bookmark.link,
+                        sizeHeight = bookmark.sizeHeight,
+                        sizeWidth = bookmark.sizeWidth,
+                        isBookmarked = true
+                    )
+                }
+                val selectedIndex = comicsListFromBookmarks.indexOfFirst { it.link == item.link }
+
+                if (selectedIndex != -1) {
+                    _navigateToViewerEvent.emit(selectedIndex to comicsListFromBookmarks)
+                }
+            }
         }
     }
 
