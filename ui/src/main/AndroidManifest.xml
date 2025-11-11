@@ -35,6 +35,10 @@
             android:name=".ui.feature.viewer.WebtoonViewerActivity"
             android:theme="@style/Theme.KSTDAndroidJTH" />
 
+        <activity
+            android:name=".ui.feature.search.ComicsSearchActivity"
+            android:theme="@style/Theme.KSTDAndroidJTH" />
+
     </application>
 
 </manifest>

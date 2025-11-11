@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.kstd.android.jth.R
 import com.kstd.android.jth.databinding.ActivityComicsBinding
 import com.kstd.android.jth.ui.base.BaseActivity
+import com.kstd.android.jth.ui.feature.search.ComicsSearchActivity
 import com.kstd.android.jth.ui.feature.viewer.WebtoonViewerActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -85,7 +86,10 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
                 menuInflater.inflate(R.menu.home_selection_menu, menu)
                 return true
             }
-            else -> return false
+            else -> {
+                menuInflater.inflate(R.menu.menu_search, menu)
+                return true
+            }
         }
     }
 
@@ -101,6 +105,11 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
             }
             R.id.action_cancel -> {
                 viewModel.cancelSelectionMode()
+                true
+            }
+            R.id.action_search -> {
+                val intent = Intent(this, ComicsSearchActivity::class.java)
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)
