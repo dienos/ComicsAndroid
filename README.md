@@ -4,24 +4,32 @@
 
 ## 1. 프로젝트 구조
 
-본 프로젝트는 확장성과 유지보수성, 그리고 테스트 용이성을 극대화하기 위해, **클린 아키텍처(Clean Architecture)**를 기반으로 설계되었습니다. 역할과 책임에 따라 3개의 모듈로 명확하게 분리되어 있습니다.
+본 프로젝트는 **클린 아키텍처(Clean Architecture)**를 기반으로 설계되었으며, 아래와 같이 역할과 책임에 따라 계층화된 패키지 구조를 가집니다. 의존성은 항상 외부 계층(`ui`, `data`)에서 내부 계층(`domain`)을 향합니다.
 
-*   **`:ui` (Presentation Layer)**
-    *   Activity, Fragment, Jetpack Compose 등 모든 UI 요소를 포함합니다.
-    *   사용자의 입력을 받아 ViewModel에 전달하고, ViewModel의 상태 변화를 관찰하여 UI를 갱신하는 역할만 담당합니다.
-    *   `DataBinding` (XML)과 `Jetpack Compose`를 함께 사용하여, 두 가지 UI 툴킷에 대한 높은 이해도를 보여주고자 했습니다.
-    *   **의존성 규칙**: 클린 아키텍처 원칙에 따라 **코드 레벨에서는 `:domain` 모듈에만 의존**합니다. 다만, 의존성 주입(DI) 라이브러리인 Hilt가 빌드 타임에 전체 의존성 그래프를 생성할 수 있도록, 설정상으로는 `:data` 모듈에 대한 의존성을 가집니다. 이는 DI 프레임워크의 기술적 요구사항을 만족시키기 위한 실용적인 선택이며, `:ui` 모듈 내 코드에서는 `:data` 모듈의 구체적인 구현을 직접 참조하지 않습니다.
+```
+KSTDAndroidJTH (Root)
+│
+├── 📁 ui (Presentation Layer)
+│   ├── di/                # Hilt 의존성 주입 관련 모듈
+│   ├── feature/           # 화면 단위(Activity/Fragment/Compose) 및 ViewModel
+│   │   ├── home/
+│   │   ├── search/
+│   │   └── viewer/
+│   ├── glide/             # Glide 관련 확장 모듈
+│   └── composable/        # 재사용 가능한 Composable 함수
+│
+├── 📁 domain (Domain Layer) - 순수 Kotlin 모듈
+│   ├── model/             # 앱 전역에서 사용되는 핵심 데이터 모델 (Entity)
+│   ├── usecase/           # 개별 비즈니스 로직을 캡슐화한 UseCase
+│   └── repository/        # 데이터 계층의 접근 방법을 정의한 인터페이스
+│
+└── 📁 data (Data Layer)
+    ├── di/                # Hilt 의존성 주입 관련 모듈
+    ├── datasource/        # Remote(Retrofit) / Local(Room) 데이터 소스
+    ├── repository/        # Domain 계층의 Repository 인터페이스 구현체
+    └── mapper/            # DTO(Data Transfer Object)를 Domain Model로 변환하는 매퍼
 
-*   **`:domain` (Domain Layer)**
-    *   프로젝트의 핵심 비즈니스 로직을 포함하는 순수 Kotlin 모듈입니다. (Android 프레임워크 의존성 없음)
-    *   `UseCase`, `Repository Interface`, 그리고 앱 전체에서 사용되는 핵심 데이터 모델(`Entity`)을 정의합니다.
-    *   특정 프레임워크에 종속되지 않아, 비즈니스 로직의 테스트 및 재사용이 용이합니다.
-
-*   **`:data` (Data Layer)**
-    *   `:domain` 계층에서 정의한 `Repository Interface`의 구현체를 제공합니다.
-    *   Naver API 통신을 위한 `Retrofit` (Remote Source)과 북마크 저장을 위한 `Room` (Local Source) 등 데이터의 출처를 관리합니다.
-    *   네트워크 DTO를 Domain Model로 변환하는 Mapper를 포함합니다.
-    *   `:domain` 모듈에만 의존합니다.
+```
 
 ## 2. 사용 라이브러리 및 용도
 
