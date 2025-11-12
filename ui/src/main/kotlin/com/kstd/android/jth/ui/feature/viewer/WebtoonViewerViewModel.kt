@@ -1,17 +1,22 @@
 package com.kstd.android.jth.ui.feature.viewer
 
 import android.app.Application
+import android.graphics.Bitmap
+import androidx.collection.LruCache
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.ui.base.BaseViewModel
-import com.kstd.android.jth.ui.extension.preloadWebtoonImages
+import com.kstd.android.jth.ui.extension.getBitmapWithGlide
 import com.kstd.android.jth.ui.util.Constants.KEY_COMICS
 import com.kstd.android.jth.ui.util.Constants.KEY_INDEX
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
@@ -31,13 +36,24 @@ class WebtoonViewerViewModel @Inject constructor(
     private val _title = MutableStateFlow("")
     val title: StateFlow<String> = _title.asStateFlow()
 
-    private var lastPreloadedIndex = -1
+    private val _readyBitmapKeys = MutableStateFlow<Set<String>>(emptySet())
+    val readyBitmapKeys: StateFlow<Set<String>> = _readyBitmapKeys.asStateFlow()
+
+    private val memoryCache: LruCache<String, Bitmap>
 
     init {
+        val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
+        val cacheSize = maxMemory / 4 // Use 1/4 of the available memory for this cache
+        memoryCache = LruCache(cacheSize)
+
         if (_webtoonItems.value.isNotEmpty()) {
             _title.value = _webtoonItems.value[_initialIndex.value].title ?: ""
             onVisibleItemsChanged(_initialIndex.value)
         }
+    }
+
+    fun getBitmapFromCache(url: String): Bitmap? {
+        return memoryCache.get(url)
     }
 
     fun setWebtoonData(comics: List<ComicsItem>, index: Int) {
@@ -53,19 +69,34 @@ class WebtoonViewerViewModel @Inject constructor(
     }
 
     fun onVisibleItemsChanged(firstVisibleItemIndex: Int) {
-        if (webtoonItems.value.isEmpty() || firstVisibleItemIndex == lastPreloadedIndex) {
-            return
-        }
+        if (webtoonItems.value.isEmpty()) return
 
-        lastPreloadedIndex = firstVisibleItemIndex
-
-        val preloadRange = 30
+        val preloadRange = 15
         val start = max(0, firstVisibleItemIndex - preloadRange)
-        val end = min(webtoonItems.value.size, firstVisibleItemIndex + preloadRange)
+        val end = min(webtoonItems.value.size, firstVisibleItemIndex + preloadRange * 2) // Preload more items downwards
 
-        if (start < end) {
-            val sublistToPreload = webtoonItems.value.subList(start, end)
-            preloadWebtoonImages(application.applicationContext, sublistToPreload, viewModelScope)
+        (start until end).forEach { index ->
+            val item = webtoonItems.value[index]
+            val url = item.link ?: return@forEach
+
+            if (memoryCache[url] == null) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    try {
+                        val screenWidth = application.resources.displayMetrics.widthPixels
+                        val imageWidth = item.sizeWidth?.toIntOrNull() ?: screenWidth
+                        val imageHeight = item.sizeHeight?.toIntOrNull() ?: screenWidth
+
+                        val targetHeight = (screenWidth.toFloat() / imageWidth * imageHeight).toInt()
+
+                        val bitmap = application.getBitmapWithGlide(url, screenWidth, targetHeight)
+
+                        memoryCache.put(url, bitmap)
+                        _readyBitmapKeys.update { it + url }
+                    } catch (e: Exception) {
+                        // Handle exception
+                    }
+                }
+            }
         }
     }
 }

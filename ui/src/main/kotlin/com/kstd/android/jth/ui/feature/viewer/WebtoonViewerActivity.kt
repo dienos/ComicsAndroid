@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.ui.composable.CheckerboardBackground
-import com.kstd.android.jth.ui.extension.loadAsWebtoon
 import com.kstd.android.jth.ui.theme.ComicsAppTheme
 import com.kstd.android.jth.ui.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,6 +66,7 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
     val webtoonItems by viewModel.webtoonItems.collectAsState()
     val initialIndex by viewModel.initialIndex.collectAsState()
     val title by viewModel.title.collectAsState()
+    val readyBitmapKeys by viewModel.readyBitmapKeys.collectAsState()
 
     val lazyListState = rememberLazyListState()
 
@@ -116,6 +116,9 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
                             itemModifier.aspectRatio(imageWidth.toFloat() / imageHeight.toFloat())
                     }
 
+                    val url = item.link ?: ""
+                    val isBitmapReady = readyBitmapKeys.contains(url)
+
                     AndroidView(
                         factory = { context ->
                             ImageView(context).apply {
@@ -123,7 +126,16 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
                             }
                         },
                         update = { imageView ->
-                            imageView.loadAsWebtoon(url = item.link ?: "")
+                            if (isBitmapReady) {
+                                val bitmap = viewModel.getBitmapFromCache(url)
+                                if (bitmap != null) {
+                                    imageView.setImageBitmap(bitmap)
+                                } else {
+                                    imageView.setImageDrawable(null)
+                                }
+                            } else {
+                                imageView.setImageDrawable(null)
+                            }
                         },
                         modifier = itemModifier
                     )

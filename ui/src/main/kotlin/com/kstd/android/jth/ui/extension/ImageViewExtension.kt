@@ -1,162 +1,20 @@
 package com.kstd.android.jth.ui.extension
 
-import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.DecodeFormat
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.kstd.android.jth.R
-import com.kstd.android.jth.domain.model.remote.ComicsItem
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-fun preloadWebtoonImages(context: Context, comicsToPreload: List<ComicsItem>, scope: CoroutineScope) {
-    scope.launch(Dispatchers.IO) {
-        val screenWidth = context.resources.displayMetrics.widthPixels
-
-        comicsToPreload.forEach { item ->
-            item.link?.let { url ->
-                val imageWidth = item.sizeWidth?.toIntOrNull()
-                val imageHeight = item.sizeHeight?.toIntOrNull()
-
-                val request = Glide.with(context)
-                    .asBitmap()
-                    .load(url)
-                    .apply(
-                        RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                            .format(DecodeFormat.PREFER_ARGB_8888)
-                    )
-
-                if (imageWidth != null && imageHeight != null && imageWidth > 0 && imageHeight > 0) {
-                    val targetHeight = (screenWidth.toFloat() / imageWidth * imageHeight).toInt()
-                    request.preload(screenWidth, targetHeight)
-                } else {
-                    request.preload()
-                }
-            }
-        }
-    }
-}
-
-private fun createProgressDrawable(imageView: ImageView): CircularProgressDrawable {
-    return CircularProgressDrawable(imageView.context).apply {
-        strokeWidth = 10f
-        centerRadius = 50f
-        start()
-    }
-}
-
-private fun ImageView.executeGlide(url: String, requestOptions: RequestOptions, listener: RequestListener<Drawable>) {
-    val thumbnailRequest = Glide.with(context)
-        .load(url)
-        .apply(RequestOptions().sizeMultiplier(0.9f))
-
-    Glide.with(this.context)
-        .load(url)
-        .apply(requestOptions)
-        .thumbnail(thumbnailRequest)
-        .transition(DrawableTransitionOptions.withCrossFade())
-        .listener(listener)
-        .into(this)
-}
-
-private fun ImageView.executeGlideForWebtoon(url: String, requestOptions: RequestOptions) {
-    val thumbnailRequest = Glide.with(this.context)
-        .asBitmap()
-        .load(url)
-        .apply(RequestOptions().sizeMultiplier(0.1f))
-
-    Glide.with(this.context)
-        .asBitmap()
-        .load(url)
-        .apply(requestOptions)
-        .thumbnail(thumbnailRequest)
-        .transition(BitmapTransitionOptions.withCrossFade())
-        .listener(object : RequestListener<Bitmap> {
-            override fun onLoadFailed(
-                e: GlideException?,
-                model: Any?,
-                target: Target<Bitmap>?,
-                isFirstResource: Boolean
-            ): Boolean {
-                Log.e("GlideBindingAdapter", "Image load failed for url: $url", e)
-
-                this@executeGlideForWebtoon.setImageResource(R.drawable.ic_launcher_foreground)
-
-                this@executeGlideForWebtoon.setOnClickListener {
-                    this@executeGlideForWebtoon.setOnClickListener(null)
-                    this@executeGlideForWebtoon.loadAsWebtoon(url)
-                }
-                return true
-            }
-
-            override fun onResourceReady(
-                resource: Bitmap?,
-                model: Any?,
-                target: Target<Bitmap>?,
-                dataSource: DataSource?,
-                isFirstResource: Boolean
-            ): Boolean {
-                this@executeGlideForWebtoon.setOnClickListener(null)
-                Log.d("Glide", "Image for $url loaded from: $dataSource")
-                return false
-            }
-        })
-        .into(this)
-}
-
-private fun ImageView.prepareWebtoonRequestOptions(): RequestOptions {
-    return RequestOptions()
-        .error(R.drawable.ic_launcher_foreground)
-        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-        .format(DecodeFormat.PREFER_ARGB_8888)
-}
-
-private fun ImageView.prepareRequestOptions(
-    width: String,
-    height: String,
-    defaultScaleType: ImageView.ScaleType
-
-
-): RequestOptions {
-    val progressDrawable = createProgressDrawable(this)
-    var requestOptions = RequestOptions()
-        .placeholder(progressDrawable)
-        .error(R.drawable.ic_launcher_foreground)
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-
-    this.scaleType = defaultScaleType
-
-    if (width.toInt() > 0 && height.toInt() > 0) {
-        requestOptions = requestOptions.override(width.toInt(), height.toInt())
-    }
-
-    return requestOptions
-}
-
-fun ImageView.loadAsWebtoon(url: String) {
-    if (url.isEmpty()) {
-        setImageResource(R.drawable.ic_launcher_background)
-        return
-    }
-    val options = this.prepareWebtoonRequestOptions()
-    executeGlideForWebtoon(url, options)
-}
-
+/**
+ * A Data Binding adapter to load an image from a URL into an ImageView.
+ * This is used in XML layouts for lists (e.g., home, bookmarks).
+ */
 @BindingAdapter("imageUrl", "imageWidth", "imageHeight", requireAll = false)
 fun ImageView.bindImageUrl(url: String?, width: String?, height: String?) {
     if (url.isNullOrEmpty() || width.isNullOrEmpty() || height.isNullOrEmpty()) {
