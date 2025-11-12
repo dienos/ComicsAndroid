@@ -16,4 +16,11 @@
     <string name="search_hint">제목으로 코믹스 검색</string>
     <string name="comics_search_title">코믹스 검색</string>
 
+    <!-- Guide -->
+    <string name="guide_home_long_press">아이템을 길게 누르면 북마크 추가 모드로 진입합니다.</string>
+    <string name="guide_home_add">아이템을 선택하고 상단 추가 버튼을 눌러 북마크에 추가하세요.</string>
+    <string name="guide_bookmark_long_press">아이템을 길게 누르면 북마크 삭제 모드로 진입합니다.</string>
+    <string name="guide_bookmark_delete">아이템을 선택하고 상단 삭제 버튼을 눌러 북마크에서 삭제하세요.</string>
+    <string name="guide_close">닫기</string>
+
 </resources>

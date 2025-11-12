@@ -25,6 +25,7 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(R.layout.fragment
 
         setupBinding()
         setupRecyclerView()
+        setupGuideTouchListener()
         setupSwipeRefresh()
         observeData()
     }
@@ -47,6 +48,13 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(R.layout.fragment
                 layoutManager
             }
         }
+    }
+
+    private fun setupGuideTouchListener() {
+        binding.guideLayout.setOnTouchListener({ _, _ ->
+            viewModel.onBookMarkGuideTouch()
+            true
+        })
     }
 
     private fun setupSwipeRefresh() {

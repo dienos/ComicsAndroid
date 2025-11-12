@@ -25,6 +25,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         setupBinding()
         setupRecyclerView()
         setupSwipeRefresh()
+        setupGuideTouchListener()
         observeData()
     }
 
@@ -54,9 +55,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun setupSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.cancelSelectionMode() // 1. 모든 선택 모드를 먼저 취소합니다.
-            comicsAdapter.refresh()         // 2. 그 다음 데이터를 새로고침합니다.
+            viewModel.cancelSelectionMode()
+            comicsAdapter.refresh()
         }
+    }
+
+    private fun setupGuideTouchListener() {
+        binding.guideLayout.setOnTouchListener({ _, _ ->
+            viewModel.onHomeGuideTouch()
+            true
+        })
     }
 
     private fun observeData() {

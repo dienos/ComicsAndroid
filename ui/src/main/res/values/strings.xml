@@ -17,4 +17,11 @@
     <string name="comics_search_title">Comics Search</string>
     <string name="unknown_error">An unknown error occurred.</string>
 
+    <!-- Guide -->
+    <string name="guide_home_long_press">Long press an item to enter bookmark add mode.</string>
+    <string name="guide_home_add">Select items and press the add button at the top to add to bookmarks.</string>
+    <string name="guide_bookmark_long_press">Long press an item to enter bookmark delete mode.</string>
+    <string name="guide_bookmark_delete">Select items and press the delete button at the top to remove from bookmarks.</string>
+    <string name="guide_close">Close</string>
+
 </resources>

@@ -14,8 +14,14 @@ import com.kstd.android.jth.domain.usecase.AddBookMarkUseCase
 import com.kstd.android.jth.domain.usecase.DeleteBookmarkUseCase
 import com.kstd.android.jth.domain.usecase.GetBookMarkUseCase
 import com.kstd.android.jth.domain.usecase.FetchComicsUseCase
+import com.kstd.android.jth.domain.usecase.IsBookMarkGuideShownUseCase
+import com.kstd.android.jth.domain.usecase.IsHomeGuideShownUseCase
+import com.kstd.android.jth.domain.usecase.SetBookMarkGuideShownUseCase
+import com.kstd.android.jth.domain.usecase.SetHomeGuideShownUseCase
 import com.kstd.android.jth.ui.base.BaseViewModel
 import com.kstd.android.jth.ui.extension.getImageFilterByResolution
+import com.kstd.android.jth.ui.util.PrefKey.IS_BOOK_MARK_GUIDE_SHOWN
+import com.kstd.android.jth.ui.util.PrefKey.IS_HOME_GUIDE_SHOWN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,13 +46,35 @@ class ComicsViewModel @Inject constructor(
     private val fetchComicsUseCase: FetchComicsUseCase,
     getBookmarkUseCase: GetBookMarkUseCase,
     private val addBookmarkUseCase: AddBookMarkUseCase,
-    private val deleteBookmarkUseCase: DeleteBookmarkUseCase
+    private val deleteBookmarkUseCase: DeleteBookmarkUseCase,
+    private val isHomeGuideShownUseCase: IsHomeGuideShownUseCase,
+    private val setHomeGuideShownUseCase: SetHomeGuideShownUseCase,
+    private val isBookMarkGuideShownUseCase: IsBookMarkGuideShownUseCase,
+    private val setBookMarkGuideShownUseCase: SetBookMarkGuideShownUseCase
 ) : BaseViewModel(application) {
 
     private val _navigateToViewerEvent = MutableSharedFlow<Pair<Int, List<ComicsItem>>>()
     val navigateToViewerEvent = _navigateToViewerEvent.asSharedFlow()
 
     var currentComicsList: List<ComicsItem> = emptyList()
+
+    private val _isHomeGuideShown = MutableStateFlow(false)
+    val isHomeGuideShown = _isHomeGuideShown.asStateFlow()
+
+    private val _isBookMarkGuideShown = MutableStateFlow(false)
+    val isBookMarkGuideShown = _isBookMarkGuideShown.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _isHomeGuideShown.value = isHomeGuideShownUseCase(IS_HOME_GUIDE_SHOWN)
+        }
+        viewModelScope.launch {
+            rawBookmarksFlow.collect { bookmarks ->
+                _isBookMarkGuideShown.value =
+                    isBookMarkGuideShownUseCase(IS_BOOK_MARK_GUIDE_SHOWN) && bookmarks.isNotEmpty()
+            }
+        }
+    }
 
     fun updateCurrentComicsList(comics: List<ComicsItem>) {
         currentComicsList = comics
@@ -66,7 +94,10 @@ class ComicsViewModel @Inject constructor(
                     showToast(getApplication<Application>().getString(R.string.comics_no_results))
                 },
                 onError = { throwable ->
-                    showToast(throwable.message ?: getApplication<Application>().getString(R.string.unknown_error))
+                    showToast(
+                        throwable.message
+                            ?: getApplication<Application>().getString(R.string.unknown_error)
+                    )
                 }, filter = application.getImageFilterByResolution()
             )
         }
@@ -183,6 +214,20 @@ class ComicsViewModel @Inject constructor(
             }
 
             cancelSelectionMode()
+        }
+    }
+
+    fun onHomeGuideTouch() {
+        viewModelScope.launch(Dispatchers.IO) {
+            setHomeGuideShownUseCase.invoke(IS_HOME_GUIDE_SHOWN, true)
+            _isHomeGuideShown.value = true
+        }
+    }
+
+    fun onBookMarkGuideTouch() {
+        viewModelScope.launch(Dispatchers.IO) {
+            setBookMarkGuideShownUseCase.invoke(IS_BOOK_MARK_GUIDE_SHOWN, true)
+            _isBookMarkGuideShown.value = true
         }
     }
 

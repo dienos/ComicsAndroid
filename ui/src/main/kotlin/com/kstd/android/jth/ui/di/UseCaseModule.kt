@@ -1,10 +1,15 @@
 package com.kstd.android.jth.ui.di
 
 import com.kstd.android.jth.domain.repository.ComicsRepository
+import com.kstd.android.jth.domain.repository.SettingsRepository
 import com.kstd.android.jth.domain.usecase.AddBookMarkUseCase
 import com.kstd.android.jth.domain.usecase.DeleteBookmarkUseCase
 import com.kstd.android.jth.domain.usecase.FetchComicsUseCase
 import com.kstd.android.jth.domain.usecase.GetBookMarkUseCase
+import com.kstd.android.jth.domain.usecase.IsBookMarkGuideShownUseCase
+import com.kstd.android.jth.domain.usecase.IsHomeGuideShownUseCase
+import com.kstd.android.jth.domain.usecase.SetBookMarkGuideShownUseCase
+import com.kstd.android.jth.domain.usecase.SetHomeGuideShownUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,5 +37,25 @@ object UseCaseModule {
     @Provides
     fun providesDeleteBookMarkUseCase(repository: ComicsRepository): DeleteBookmarkUseCase {
         return DeleteBookmarkUseCase(repository)
+    }
+
+    @Provides
+    fun providesSetGuideShownUseCase(repository: SettingsRepository): SetHomeGuideShownUseCase {
+        return SetHomeGuideShownUseCase(repository)
+    }
+
+    @Provides
+    fun providesGetGuideShownUseCase(repository: SettingsRepository): IsHomeGuideShownUseCase {
+        return IsHomeGuideShownUseCase(repository)
+    }
+
+    @Provides
+    fun providesSetBookMarkGuideShownUseCase(repository: SettingsRepository): SetBookMarkGuideShownUseCase {
+        return SetBookMarkGuideShownUseCase(repository)
+    }
+
+    @Provides
+    fun providesIsBookMarkGuideShownUseCase(repository: SettingsRepository): IsBookMarkGuideShownUseCase {
+        return IsBookMarkGuideShownUseCase(repository)
     }
 }
