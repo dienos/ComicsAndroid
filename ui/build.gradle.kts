@@ -45,7 +45,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":data"))
+    runtimeOnly(project(":data"))
     implementation(project(":domain"))
 
     implementation(libs.androidx.paging.runtime.ktx)

@@ -22,6 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -69,6 +72,7 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
     val readyBitmapKeys by viewModel.readyBitmapKeys.collectAsState()
 
     val lazyListState = rememberLazyListState()
+    var isInitialScrollDone by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemIndex }
@@ -80,9 +84,10 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
             }
     }
 
-    LaunchedEffect(key1 = initialIndex) {
-        if (webtoonItems.isNotEmpty() && initialIndex >= 0) {
+    LaunchedEffect(key1 = initialIndex, key2 = webtoonItems) {
+        if (!isInitialScrollDone && webtoonItems.isNotEmpty() && initialIndex >= 0) {
             lazyListState.scrollToItem(index = initialIndex)
+            isInitialScrollDone = true
         }
     }
 
