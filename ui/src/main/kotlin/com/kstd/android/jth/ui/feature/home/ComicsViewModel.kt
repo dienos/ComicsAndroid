@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -58,23 +59,24 @@ class ComicsViewModel @Inject constructor(
 
     var currentComicsList: List<ComicsItem> = emptyList()
 
-    private val _isHomeGuideShown = MutableStateFlow(false)
+    private val _isHomeGuideShown = MutableStateFlow(isHomeGuideShownUseCase(IS_HOME_GUIDE_SHOWN))
     val isHomeGuideShown = _isHomeGuideShown.asStateFlow()
 
-    private val _isBookMarkGuideShown = MutableStateFlow(false)
+    private val _isBookMarkGuideShown = MutableStateFlow(isBookMarkGuideShownUseCase(IS_BOOK_MARK_GUIDE_SHOWN))
     val isBookMarkGuideShown = _isBookMarkGuideShown.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            _isHomeGuideShown.value = isHomeGuideShownUseCase(IS_HOME_GUIDE_SHOWN)
-        }
-        viewModelScope.launch {
-            rawBookmarksFlow.collect { bookmarks ->
-                _isBookMarkGuideShown.value =
-                    isBookMarkGuideShownUseCase(IS_BOOK_MARK_GUIDE_SHOWN) && bookmarks.isNotEmpty()
-            }
-        }
-    }
+    private val rawBookmarksFlow: StateFlow<List<BookmarkItem>> = getBookmarkUseCase().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    val isBookmarkListEmpty: StateFlow<Boolean> = rawBookmarksFlow.map { it.isEmpty() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
 
     fun updateCurrentComicsList(comics: List<ComicsItem>) {
         currentComicsList = comics
@@ -102,12 +104,6 @@ class ComicsViewModel @Inject constructor(
             )
         }
     ).flow.cachedIn(viewModelScope)
-
-    private val rawBookmarksFlow: StateFlow<List<BookmarkItem>> = getBookmarkUseCase().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
 
     private val _isBookmarkDeleteMode = MutableStateFlow(false)
     val isBookmarkDeleteMode = _isBookmarkDeleteMode.asStateFlow()

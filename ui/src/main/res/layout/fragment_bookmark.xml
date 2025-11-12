@@ -37,7 +37,6 @@
             android:layout_height="wrap_content"
             android:text="@string/bookmark_empty"
             android:textSize="18sp"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +49,7 @@
             android:layout_height="match_parent"
             android:paddingHorizontal="10dp"
             android:background="@color/guide_background"
-            android:visibility="@{viewModel.isBookMarkGuideShown ? View.GONE : View.VISIBLE}"
+            android:visibility="@{!viewModel.isBookMarkGuideShown &amp;&amp; !viewModel.isBookmarkListEmpty ? View.VISIBLE : View.GONE}"
             tools:visibility="visible">
 
             <LinearLayout
