@@ -15,5 +15,6 @@
     <string name="search">Search</string>
     <string name="search_hint">Search comics by title</string>
     <string name="comics_search_title">Comics Search</string>
+    <string name="unknown_error">An unknown error occurred.</string>
 
 </resources>

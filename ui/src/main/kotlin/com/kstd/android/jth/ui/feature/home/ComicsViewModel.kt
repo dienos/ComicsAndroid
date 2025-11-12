@@ -65,8 +65,8 @@ class ComicsViewModel @Inject constructor(
                 onEmpty = {
                     showToast(getApplication<Application>().getString(R.string.comics_no_results))
                 },
-                onError = { message ->
-                    showToast(message)
+                onError = { throwable ->
+                    showToast(throwable.message ?: getApplication<Application>().getString(R.string.unknown_error))
                 }, filter = application.getImageFilterByResolution()
             )
         }

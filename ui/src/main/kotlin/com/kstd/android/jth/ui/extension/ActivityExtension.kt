@@ -3,6 +3,7 @@ package com.kstd.android.jth.ui.extension
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import com.kstd.android.jth.ui.feature.dialog.ProgressDialogFragment
+import com.kstd.android.jth.ui.util.Constants.TAG
 import kotlin.math.min
 
 enum class ImageFilter(val value: String) {
@@ -23,14 +24,14 @@ fun Context.getImageFilterByResolution(): String {
 }
 
 fun AppCompatActivity.showProgress() {
-    supportFragmentManager.findFragmentByTag(ProgressDialogFragment.TAG) ?: run {
+    supportFragmentManager.findFragmentByTag(TAG) ?: run {
         ProgressDialogFragment.newInstance()
-            .show(supportFragmentManager, ProgressDialogFragment.TAG)
+            .show(supportFragmentManager, TAG)
     }
 }
 
 fun AppCompatActivity.hideProgress() {
-    supportFragmentManager.findFragmentByTag(ProgressDialogFragment.TAG)?.let {
+    supportFragmentManager.findFragmentByTag(TAG)?.let {
         (it as? ProgressDialogFragment)?.dismiss()
     }
 }

@@ -59,6 +59,10 @@ class SearchDiffCallback : DiffUtil.ItemCallback<ComicsItem>() {
         if (oldItem.isBookmarked != newItem.isBookmarked) {
             bundle.putBoolean(Constants.PAYLOAD_KEY_BOOKMARK, newItem.isBookmarked)
         }
-        return if (bundle.isEmpty) null else bundle
+        return if (bundle.isEmpty) {
+            null
+        } else {
+            bundle
+        }
     }
 }

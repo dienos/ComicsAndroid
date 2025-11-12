@@ -5,6 +5,14 @@ import com.kstd.android.jth.data.datasource.local.source.ComicsLocalSource
 import com.kstd.android.jth.data.datasource.remote.dto.ErrorResponseDto
 import com.kstd.android.jth.data.datasource.remote.source.ComicsRemoteSource
 import com.kstd.android.jth.data.mapper.toBookmarkEntity
+import com.kstd.android.jth.domain.exception.IncorrectQueryRequestException
+import com.kstd.android.jth.domain.exception.InvalidDisplayValueException
+import com.kstd.android.jth.domain.exception.InvalidSearchApiException
+import com.kstd.android.jth.domain.exception.InvalidSortValueException
+import com.kstd.android.jth.domain.exception.InvalidStartValueException
+import com.kstd.android.jth.domain.exception.MalformedEncodingException
+import com.kstd.android.jth.domain.exception.SystemErrorException
+import com.kstd.android.jth.domain.exception.UnknownApiException
 import com.kstd.android.jth.domain.model.ApiResult
 import com.kstd.android.jth.domain.model.local.BookmarkItem
 import com.kstd.android.jth.domain.model.remote.ComicsResponse
@@ -34,12 +42,20 @@ class ComicsRepositoryImpl @Inject constructor(
             } catch (_: Exception) {
                 null
             }
-            ApiResult.Error(
-                code = errorResponse?.errorCode ?: e.code().toString(),
-                message = errorResponse?.errorMessage ?: e.message()
-            )
+
+            val exception = when (errorResponse?.errorCode) {
+                "SE01" -> IncorrectQueryRequestException(errorResponse.errorMessage?:"")
+                "SE02" -> InvalidDisplayValueException(errorResponse.errorMessage?:"")
+                "SE03" -> InvalidStartValueException(errorResponse.errorMessage?:"")
+                "SE04" -> InvalidSortValueException(errorResponse.errorMessage?:"")
+                "SE05" -> InvalidSearchApiException(errorResponse.errorMessage?:"")
+                "SE06" -> MalformedEncodingException(errorResponse.errorMessage?:"")
+                "SE99" -> SystemErrorException(errorResponse.errorMessage?:"")
+                else -> UnknownApiException(errorResponse?.errorMessage ?: e.message())
+            }
+            ApiResult.Error(code = errorResponse?.errorCode ?: e.code().toString(), throwable = exception)
         } catch (e: IOException) {
-            ApiResult.Error(code = "-1", message = e.message.toString())
+            ApiResult.Error(code = "-1", throwable = e)
         }
     }
 

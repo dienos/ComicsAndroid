@@ -47,7 +47,11 @@ fun SplashScreen(onAnimationFinished: () -> Unit) {
     val isDarkTheme = isSystemInDarkTheme()
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(R.raw.book_opening),
-        cacheKey = if (isDarkTheme) "book_opening_dark" else "book_opening_light"
+        cacheKey = if (isDarkTheme) {
+            "book_opening_dark"
+        } else {
+            "book_opening_light"
+        }
     )
     val progress by animateLottieCompositionAsState(composition)
 

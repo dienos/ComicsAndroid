@@ -8,13 +8,12 @@ import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.domain.usecase.FetchComicsUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.IOException
 
 private const val TAG = "ComicsPagingSource"
 
 class ComicsPagingSource(
     private val fetchComicsUseCase: FetchComicsUseCase,
-    private val onError: (String) -> Unit,
+    private val onError: (Throwable) -> Unit,
     private val onEmpty: () -> Unit,
     private val filter: String,
 ) : PagingSource<Int, ComicsItem>() {
@@ -61,14 +60,13 @@ class ComicsPagingSource(
             }
 
             is ApiResult.Error -> {
-                val errorMessage = "[${result.code}] ${result.message}"
-                Log.e(TAG, "Error loading from start index $start: $errorMessage")
+                Log.e(TAG, "Error loading from start index $start: ${result.throwable.message}", result.throwable)
 
                 withContext(Dispatchers.Main) {
-                    onError(errorMessage)
+                    onError(result.throwable)
                 }
 
-                LoadResult.Error(IOException(errorMessage))
+                LoadResult.Error(result.throwable)
             }
         }
     }
