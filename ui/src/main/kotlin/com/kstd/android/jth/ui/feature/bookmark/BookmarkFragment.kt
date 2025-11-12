@@ -5,6 +5,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import com.kstd.android.jth.R
 import com.kstd.android.jth.databinding.FragmentBookmarkBinding
 import com.kstd.android.jth.ui.base.BaseFragment
@@ -34,8 +35,18 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(R.layout.fragment
     }
 
     private fun setupRecyclerView() {
-        binding.rvBookmarkFragment.setHasFixedSize(true)
-        binding.rvBookmarkFragment.adapter = bookmarkAdapter
+        val isTablet = requireContext().resources.getBoolean(R.bool.is_tablet)
+
+        binding.rvBookmarkFragment.apply {
+            setHasFixedSize(true)
+            setItemViewCacheSize(10)
+            adapter = bookmarkAdapter
+            layoutManager = if (isTablet) {
+                GridLayoutManager(requireContext(), 2)
+            } else {
+                layoutManager // Keep the default LinearLayoutManager
+            }
+        }
     }
 
     private fun setupSwipeRefresh() {
@@ -46,8 +57,8 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(R.layout.fragment
 
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.isRefreshing.collectLatest {
-                binding.swipeRefreshLayout.isRefreshing = it
+            viewModel.isRefreshing.collectLatest { isRefreshing ->
+                binding.swipeRefreshLayout.isRefreshing = isRefreshing
             }
         }
 
@@ -56,6 +67,7 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(R.layout.fragment
                 val isEmpty = bookmarks.isEmpty()
                 binding.rvBookmarkFragment.isVisible = !isEmpty
                 binding.tvEmptyBookmark.isVisible = isEmpty
+                bookmarkAdapter.submitList(bookmarks)
             }
         }
     }

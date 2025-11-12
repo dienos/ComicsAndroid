@@ -73,7 +73,7 @@ class WebtoonViewerViewModel @Inject constructor(
 
         val preloadRange = 15
         val start = max(0, firstVisibleItemIndex - preloadRange)
-        val end = min(webtoonItems.value.size, firstVisibleItemIndex + preloadRange * 2) // Preload more items downwards
+        val end = min(webtoonItems.value.size, firstVisibleItemIndex + preloadRange * 2)
 
         (start until end).forEach { index ->
             val item = webtoonItems.value[index]

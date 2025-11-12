@@ -120,10 +120,16 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
                     val isBitmapReady = readyBitmapKeys.contains(url)
 
                     AndroidView(
-                        factory = { context ->
-                            ImageView(context).apply {
+                        factory = {
+                            ImageView(it).apply {
                                 scaleType = ImageView.ScaleType.FIT_XY
                             }
+                        },
+                        onRelease = { 
+                            // This is the definitive fix for the hover crash.
+                            // When LazyColumn disposes this View, explicitly clear its hover state
+                            // to prevent the IllegalStateException in AndroidComposeView.
+                            it.isHovered = false
                         },
                         update = { imageView ->
                             if (isBitmapReady) {
