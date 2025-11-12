@@ -44,7 +44,7 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(R.layout.fragment
             layoutManager = if (isTablet) {
                 GridLayoutManager(requireContext(), 2)
             } else {
-                layoutManager // Keep the default LinearLayoutManager
+                layoutManager
             }
         }
     }

@@ -51,7 +51,11 @@ class ComicsPagingSource(
 
                 LoadResult.Page(
                     data = comics,
-                    prevKey = if (start == STARTING_INDEX) null else start - PAGE_SIZE,
+                    prevKey = if (start == STARTING_INDEX) {
+                        null
+                    } else {
+                        start - PAGE_SIZE
+                    },
                     nextKey = nextKey
                 )
             }

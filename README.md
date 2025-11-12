@@ -10,22 +10,30 @@
 KSTDAndroidJTH (Root)
 │
 ├── 📁 ui (Presentation Layer)
+│   ├── base/              # BaseActivity, BaseFragment 등 공통 기반 클래스
 │   ├── di/                # Hilt 의존성 주입 관련 모듈
 │   ├── feature/           # 화면 단위(Activity/Fragment/Compose) 및 ViewModel
+│   │   ├── splash/
 │   │   ├── home/
 │   │   ├── search/
-│   │   └── viewer/
+│   │   ├── bookmark/
+│   │   ├── viewer/
+│   │   └── dialog/
 │   ├── glide/             # Glide 관련 확장 모듈
-│   └── composable/        # 재사용 가능한 Composable 함수
+│   ├── composable/        # 재사용 가능한 Composable 함수
+│   ├── extension/         # View, Context 등 다양한 확장 함수
+│   ├── theme/             # 앱의 테마, 색상, 타이포그래피 정의
+│   └── util/              # 상수(Constants) 및 기타 유틸리티 클래스
 │
 ├── 📁 domain (Domain Layer) - 순수 Kotlin 모듈
 │   ├── model/             # 앱 전역에서 사용되는 핵심 데이터 모델 (Entity)
 │   ├── usecase/           # 개별 비즈니스 로직을 캡슐화한 UseCase
-│   └── repository/        # 데이터 계층의 접근 방법을 정의한 인터페이스
+│   ├── repository/        # 데이터 계층의 접근 방법을 정의한 인터페이스
+│   └── exception/         # 사용자 정의 Exception
 │
 └── 📁 data (Data Layer)
-    ├── di/                # Hilt 의존성 주입 관련 모듈
     ├── datasource/        # Remote(Retrofit) / Local(Room) 데이터 소스
+    ├── di/                # Hilt 의존성 주입 관련 모듈
     ├── repository/        # Domain 계층의 Repository 인터페이스 구현체
     └── mapper/            # DTO(Data Transfer Object)를 Domain Model로 변환하는 매퍼
 

@@ -47,8 +47,13 @@ class BookmarkAdapter(private val viewModel: ComicsViewModel) : ListAdapter<Book
         fun update(bundle: Bundle) {
             if (bundle.containsKey(Constants.PAYLOAD_KEY_SELECTION_MODE)) {
                 val isSelectionMode = bundle.getBoolean(Constants.PAYLOAD_KEY_SELECTION_MODE)
-                binding.cbBookmarkSelect.visibility = if (isSelectionMode) View.VISIBLE else View.GONE
+                binding.cbBookmarkSelect.visibility = if (isSelectionMode) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
             }
+
             if (bundle.containsKey(Constants.PAYLOAD_KEY_SELECTED)) {
                 binding.cbBookmarkSelect.isChecked = bundle.getBoolean(Constants.PAYLOAD_KEY_SELECTED)
             }
@@ -70,9 +75,15 @@ class BookmarkDiffCallback : DiffUtil.ItemCallback<BookmarkItem>() {
         if (oldItem.isSelectionMode != newItem.isSelectionMode) {
             bundle.putBoolean(Constants.PAYLOAD_KEY_SELECTION_MODE, newItem.isSelectionMode)
         }
+
         if (oldItem.isSelected != newItem.isSelected) {
             bundle.putBoolean(Constants.PAYLOAD_KEY_SELECTED, newItem.isSelected)
         }
-        return if (bundle.isEmpty) null else bundle
+
+        return if (bundle.isEmpty) {
+            null
+        } else {
+            bundle
+        }
     }
 }

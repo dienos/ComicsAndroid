@@ -49,9 +49,17 @@ class ComicsAdapter(private val viewModel: ComicsViewModel) : PagingDataAdapter<
             }
             if (bundle.containsKey(Constants.PAYLOAD_KEY_SELECTION_MODE)) {
                 val isSelectionMode = bundle.getBoolean(Constants.PAYLOAD_KEY_SELECTION_MODE)
-                binding.tbBookmark.visibility = if (!isSelectionMode) View.VISIBLE else View.GONE
+                binding.tbBookmark.visibility = if (!isSelectionMode) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
                 val isBookmarked = binding.item?.isBookmarked ?: false
-                binding.cbHomeSelect.visibility = if (isSelectionMode && !isBookmarked) View.VISIBLE else View.GONE
+                binding.cbHomeSelect.visibility = if (isSelectionMode && !isBookmarked) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
             }
         }
     }
@@ -78,6 +86,10 @@ class ComicDiffCallback : DiffUtil.ItemCallback<ComicsItem>() {
             bundle.putBoolean(Constants.PAYLOAD_KEY_SELECTION_MODE, newItem.isSelectionMode)
         }
 
-        return if (bundle.isEmpty) null else bundle
+        return if (bundle.isEmpty) {
+            null
+        } else {
+            bundle
+        }
     }
 }

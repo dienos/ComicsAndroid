@@ -10,10 +10,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/**
- * A Composable that draws a checkerboard pattern using theme colors.
- * This is a resolution-independent and theme-aware alternative to using a tiled bitmap.
- */
+
 @Composable
 fun CheckerboardBackground(
     modifier: Modifier = Modifier,
@@ -31,7 +28,11 @@ fun CheckerboardBackground(
 
         for (i in 0 until verticalSquares) {
             for (j in 0 until horizontalSquares) {
-                val color = if ((i + j) % 2 == 0) color1 else color2
+                val color = if ((i + j) % 2 == 0) {
+                    color1
+                } else {
+                    color2
+                }
                 drawRect(
                     color = color,
                     topLeft = Offset(j * squareSizePx, i * squareSizePx),

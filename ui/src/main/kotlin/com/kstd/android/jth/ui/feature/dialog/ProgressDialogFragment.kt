@@ -11,8 +11,6 @@ import androidx.core.graphics.drawable.toDrawable
 class ProgressDialogFragment : DialogFragment() {
 
     companion object {
-        const val TAG = "ProgressDialogFragment"
-
         fun newInstance(): ProgressDialogFragment {
             return ProgressDialogFragment()
         }

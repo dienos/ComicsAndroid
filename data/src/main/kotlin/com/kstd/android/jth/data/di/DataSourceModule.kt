@@ -15,9 +15,9 @@ import javax.inject.Singleton
 abstract class DataSourceModule {
     @Singleton
     @Binds
-    abstract fun bindsSimpleRemoteSource(source: ComicsRemoteSourceImpl): ComicsRemoteSource
+    abstract fun bindsComicsRemoteSource(source: ComicsRemoteSourceImpl): ComicsRemoteSource
 
     @Singleton
     @Binds
-    abstract fun bindsSimpleLocalSource(source: ComicsLocalSourceImpl): ComicsLocalSource
+    abstract fun bindsComicsLocalSource(source: ComicsLocalSourceImpl): ComicsLocalSource
 }

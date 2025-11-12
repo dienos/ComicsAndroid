@@ -1,4 +1,4 @@
-package com.kstd.android.jth.ui.utils
+package com.kstd.android.jth.ui.extension
 
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.findViewTreeLifecycleOwner

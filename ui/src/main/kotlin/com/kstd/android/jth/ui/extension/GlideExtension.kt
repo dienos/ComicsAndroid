@@ -10,13 +10,30 @@ import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.GlideBuilder
+import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory
+import com.bumptech.glide.load.engine.cache.LruResourceCache
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.min
+
+@GlideModule
+class ComicsGlideModule : AppGlideModule() {
+
+    override fun applyOptions(context: Context, builder: GlideBuilder) {
+        val memoryCacheSizeBytes = 1024 * 1024 * 20L
+        builder.setMemoryCache(LruResourceCache(memoryCacheSizeBytes))
+        val diskCacheSizeBytes = 1024 * 1024 * 500L
+        builder.setDiskCache(InternalCacheDiskCacheFactory(context, diskCacheSizeBytes))
+    }
+}
+
 
 suspend fun Context.getBitmapWithGlide(url: String, width: Int, height: Int): Bitmap =
     withContext(Dispatchers.IO) {

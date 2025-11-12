@@ -16,8 +16,16 @@ class WebtoonPagingSource(private val items: List<ComicsItem>) : PagingSource<In
 
         return LoadResult.Page(
             data = sublist,
-            prevKey = if (page == 0) null else page - 1,
-            nextKey = if (end == items.size) null else page + 1
+            prevKey = if (page == 0) {
+                null
+            } else {
+                page - 1
+            },
+            nextKey = if (end == items.size) {
+                null
+            } else {
+                page + 1
+            }
         )
     }
 }
