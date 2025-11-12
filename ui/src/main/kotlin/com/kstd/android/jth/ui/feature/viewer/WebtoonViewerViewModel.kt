@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import androidx.collection.LruCache
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.kstd.android.jth.R
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.ui.base.BaseViewModel
 import com.kstd.android.jth.ui.extension.getBitmapWithGlide
@@ -69,7 +70,9 @@ class WebtoonViewerViewModel @Inject constructor(
     }
 
     fun onVisibleItemsChanged(firstVisibleItemIndex: Int) {
-        if (webtoonItems.value.isEmpty()) return
+        if (webtoonItems.value.isEmpty()) {
+            return
+        }
 
         val preloadRange = 15
         val start = max(0, firstVisibleItemIndex - preloadRange)

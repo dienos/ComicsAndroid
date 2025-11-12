@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">K Comics</string>
+    <string name="app_name">jth Comics</string>
 
     <!-- Comics Feature -->
     <string name="comics_tab_home">Home</string>
@@ -13,6 +13,7 @@
     <string name="bookmarks_deleted_count">%d items deleted.</string>
     <string name="bookmark_empty">No bookmarked items found.</string>
     <string name="search">Search</string>
+    <string name="able_up_scroll">You can scroll up</string>
     <string name="search_hint">Search comics by title</string>
     <string name="comics_search_title">Comics Search</string>
     <string name="unknown_error">An unknown error occurred.</string>

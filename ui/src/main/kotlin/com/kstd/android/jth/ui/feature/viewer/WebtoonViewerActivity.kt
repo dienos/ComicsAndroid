@@ -3,6 +3,7 @@ package com.kstd.android.jth.ui.feature.viewer
 import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -29,12 +30,17 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.lifecycleScope
+import com.kstd.android.jth.R
 import com.kstd.android.jth.domain.model.remote.ComicsItem
+import com.kstd.android.jth.ui.base.BaseViewModel
 import com.kstd.android.jth.ui.composable.CheckerboardBackground
 import com.kstd.android.jth.ui.theme.ComicsAppTheme
 import com.kstd.android.jth.ui.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -54,10 +60,23 @@ class WebtoonViewerActivity : ComponentActivity() {
         } ?: emptyList<ComicsItem>()
 
         viewModel.setWebtoonData(comics, selectedIndex)
+        observeToastEvents()
 
         setContent {
             ComicsAppTheme {
                 WebtoonViewerScreen(viewModel)
+            }
+        }
+
+        if(selectedIndex > 0) {
+            viewModel.showToast(application.getString(R.string.able_up_scroll))
+        }
+    }
+
+    private fun observeToastEvents() {
+        lifecycleScope.launch {
+            viewModel.toastEvent.collectLatest { message ->
+                Toast.makeText(this@WebtoonViewerActivity, message, Toast.LENGTH_SHORT).show()
             }
         }
     }
