@@ -35,15 +35,22 @@ fun ImageView.bindImageUrl(url: String?, width: String?, height: String?) {
             dataSource: DataSource?,
             isFirstResource: Boolean
         ): Boolean {
-            if (width.toInt() > 0 && height.toInt() > 0) {
-                val viewRatio =
-                    this@bindImageUrl.height.toFloat() / this@bindImageUrl.width.toFloat()
-                val imageRatio = height.toFloat() / width.toFloat()
 
-                this@bindImageUrl.scaleType = if (viewRatio > imageRatio) {
-                    ImageView.ScaleType.FIT_CENTER
-                } else {
-                    ImageView.ScaleType.CENTER_CROP
+            if (width.toInt() > 0 && height.toInt() > 0) {
+                this@bindImageUrl.post {
+                    if (this@bindImageUrl.width > 0 && this@bindImageUrl.height > 0) {
+                        val viewRatio =
+                            this@bindImageUrl.height.toFloat() / this@bindImageUrl.width.toFloat()
+                        val imageRatio = height.toFloat() / width.toFloat()
+
+                        this@bindImageUrl.scaleType = if (viewRatio > imageRatio) {
+                            ImageView.ScaleType.FIT_CENTER
+                        } else {
+                            ImageView.ScaleType.CENTER_CROP
+                        }
+                    } else {
+                        ImageView.ScaleType.CENTER_CROP
+                    }
                 }
             }
             return false
