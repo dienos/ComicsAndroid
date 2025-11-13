@@ -14,7 +14,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.kstd.android.jth.R
 import com.kstd.android.jth.databinding.ActivityComicsBinding
 import com.kstd.android.jth.ui.base.BaseActivity
-import com.kstd.android.jth.ui.extension.getParcelableArrayList
 import com.kstd.android.jth.ui.feature.search.ComicsSearchActivity
 import com.kstd.android.jth.ui.feature.viewer.WebtoonViewerActivity
 import com.kstd.android.jth.ui.util.Constants
@@ -59,6 +58,7 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
                 invalidateOptionsMenu()
             }
         }
+
         lifecycleScope.launch {
             viewModel.isHomeSelectionMode.collectLatest {
                 invalidateOptionsMenu()

@@ -249,7 +249,7 @@ class ComicsViewModel @Inject constructor(
             }
         } else {
             viewModelScope.launch {
-                val selectedIndex = currentComicsList.indexOf(item)
+                val selectedIndex = currentComicsList.indexOfFirst { it.link == item.link }
 
                 if (selectedIndex != -1) {
                     _navigateToViewerEvent.emit(selectedIndex to currentComicsList)
@@ -277,6 +277,8 @@ class ComicsViewModel @Inject constructor(
 
                 if (selectedIndex != -1) {
                     _navigateToViewerEvent.emit(selectedIndex to currentComicsList)
+                } else {
+                    showToast(getApplication<Application>().getString(R.string.comics_not_loaded))
                 }
             }
         }

@@ -17,6 +17,7 @@
     <string name="search_hint">제목으로 코믹스 검색</string>
     <string name="comics_search_title">코믹스 검색</string>
     <string name="unknown_error">알 수없는 에러입니다.</string>
+    <string name="comics_not_loaded">로드되지 않은 항목입니다.</string>
 
     <!-- Guide -->
     <string name="guide_home_long_press">아이템을 길게 누르면 북마크 추가 모드로 진입합니다.</string>

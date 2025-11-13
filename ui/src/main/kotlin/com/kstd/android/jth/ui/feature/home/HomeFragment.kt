@@ -2,9 +2,11 @@ package com.kstd.android.jth.ui.feature.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kstd.android.jth.R
 import com.kstd.android.jth.databinding.FragmentHomeBinding
@@ -18,15 +20,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private val viewModel: ComicsViewModel by activityViewModels()
     private val comicsAdapter by lazy { ComicsAdapter(viewModel) }
+    private lateinit var backPressedCallback: OnBackPressedCallback
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupBackPressedCallback()
         setupBinding()
         setupRecyclerView()
         setupSwipeRefresh()
         setupGuideTouchListener()
         observeData()
+    }
+
+    private fun setupBackPressedCallback() {
+        backPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() {
+                viewModel.cancelSelectionMode()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
     }
 
     private fun setupBinding() {
@@ -41,6 +54,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             setHasFixedSize(true)
             setItemViewCacheSize(10)
             adapter = comicsAdapter
+            (itemAnimator as? DefaultItemAnimator)?.supportsChangeAnimations = false
             layoutManager = if (isTablet) {
                 GridLayoutManager(requireContext(), 2)
             } else {
@@ -73,6 +87,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 val isRefreshing = loadStates.refresh is LoadState.Loading
                 binding.swipeRefreshLayout.isRefreshing = isRefreshing
                 viewModel.setLoading(isRefreshing)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isHomeSelectionMode.collectLatest { isSelectionMode ->
+                backPressedCallback.isEnabled = isSelectionMode
             }
         }
     }

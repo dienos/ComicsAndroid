@@ -1,7 +1,10 @@
 package com.kstd.android.jth.ui.feature.bookmark
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -19,15 +22,27 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(R.layout.fragment
 
     private val viewModel: ComicsViewModel by activityViewModels()
     private val bookmarkAdapter by lazy { BookmarkAdapter(viewModel) }
+    private lateinit var backPressedCallback: OnBackPressedCallback
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setHasOptionsMenu(true)
+        setupBackPressedCallback()
         setupBinding()
         setupRecyclerView()
         setupGuideTouchListener()
         setupSwipeRefresh()
         observeData()
+    }
+
+    private fun setupBackPressedCallback() {
+        backPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() {
+                viewModel.cancelSelectionMode()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
     }
 
     private fun setupBinding() {
@@ -77,6 +92,22 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(R.layout.fragment
                 binding.tvEmptyBookmark.isVisible = isEmpty
                 bookmarkAdapter.submitList(bookmarks)
             }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isBookmarkDeleteMode.collectLatest { isDeleteMode ->
+                backPressedCallback.isEnabled = isDeleteMode
+                activity?.invalidateOptionsMenu()
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        if (viewModel.isBookmarkDeleteMode.value) {
+            inflater.inflate(R.menu.bookmark_selection_menu, menu)
+        } else {
+            menu.clear()
         }
     }
 }
