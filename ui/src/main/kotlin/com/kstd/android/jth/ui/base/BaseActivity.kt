@@ -12,7 +12,7 @@ import com.kstd.android.jth.ui.extension.showProgress
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-abstract class BaseActivity<T : ViewDataBinding>(@LayoutRes private val layoutResId: Int) :
+abstract class BaseActivity<T : ViewDataBinding>(@param:LayoutRes private val layoutResId: Int) :
     AppCompatActivity() {
     protected lateinit var binding: T
 

@@ -2,10 +2,10 @@ package com.kstd.android.jth.ui.feature.viewer
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.collection.LruCache
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.kstd.android.jth.R
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.ui.base.BaseViewModel
 import com.kstd.android.jth.ui.extension.getBitmapWithGlide
@@ -44,7 +44,7 @@ class WebtoonViewerViewModel @Inject constructor(
 
     init {
         val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
-        val cacheSize = maxMemory / 4 // Use 1/4 of the available memory for this cache
+        val cacheSize = maxMemory / 4
         memoryCache = LruCache(cacheSize)
 
         if (_webtoonItems.value.isNotEmpty()) {
@@ -54,7 +54,7 @@ class WebtoonViewerViewModel @Inject constructor(
     }
 
     fun getBitmapFromCache(url: String): Bitmap? {
-        return memoryCache.get(url)
+        return memoryCache[url]
     }
 
     fun setWebtoonData(comics: List<ComicsItem>, index: Int) {
@@ -96,7 +96,7 @@ class WebtoonViewerViewModel @Inject constructor(
                         memoryCache.put(url, bitmap)
                         _readyBitmapKeys.update { it + url }
                     } catch (e: Exception) {
-                        // Handle exception
+                        Log.e("WebtoonViewerViewModel", "onVisibleItemsChanged: $e")
                     }
                 }
             }

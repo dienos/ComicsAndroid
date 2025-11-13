@@ -1,7 +1,6 @@
 package com.kstd.android.jth.ui.feature.search
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -9,6 +8,7 @@ import com.kstd.android.jth.R
 import com.kstd.android.jth.databinding.ActivityComicsSearchBinding
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.ui.base.BaseActivity
+import com.kstd.android.jth.ui.extension.getParcelableArrayList
 import com.kstd.android.jth.ui.feature.viewer.WebtoonViewerActivity
 import com.kstd.android.jth.ui.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,11 +34,7 @@ class ComicsSearchActivity : BaseActivity<ActivityComicsSearchBinding>(R.layout.
     }
 
     private fun getComicsListFromIntent() {
-        val comics = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableArrayListExtra(Constants.EXTRA_COMICS_LIST, ComicsItem::class.java)
-        } else {
-            intent.getParcelableArrayListExtra(Constants.EXTRA_COMICS_LIST)
-        } ?: emptyList()
+        val comics = intent.getParcelableArrayList<ComicsItem>(Constants.EXTRA_COMICS_LIST) ?: emptyList()
         viewModel.setInitialComics(comics)
     }
 

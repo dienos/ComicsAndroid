@@ -1,6 +1,5 @@
 package com.kstd.android.jth.ui.feature.viewer
 
-import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.Toast
@@ -34,6 +33,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kstd.android.jth.R
 import com.kstd.android.jth.domain.model.remote.ComicsItem
 import com.kstd.android.jth.ui.composable.CheckerboardBackground
+import com.kstd.android.jth.ui.extension.getParcelableArrayList
 import com.kstd.android.jth.ui.theme.ComicsAppTheme
 import com.kstd.android.jth.ui.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,12 +51,7 @@ class WebtoonViewerActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val selectedIndex = intent.getIntExtra(Constants.EXTRA_SELECTED_INDEX, 0)
-
-        val comics = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableArrayListExtra(Constants.EXTRA_COMICS_LIST, ComicsItem::class.java)
-        } else {
-            intent.getParcelableArrayListExtra(Constants.EXTRA_COMICS_LIST)
-        } ?: emptyList<ComicsItem>()
+        val comics = intent.getParcelableArrayList<ComicsItem>(Constants.EXTRA_COMICS_LIST) ?: emptyList()
 
         viewModel.setWebtoonData(comics, selectedIndex)
         observeToastEvents()
