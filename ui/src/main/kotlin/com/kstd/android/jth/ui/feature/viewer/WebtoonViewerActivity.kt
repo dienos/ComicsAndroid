@@ -33,7 +33,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
 import com.kstd.android.jth.R
 import com.kstd.android.jth.domain.model.remote.ComicsItem
-import com.kstd.android.jth.ui.base.BaseViewModel
 import com.kstd.android.jth.ui.composable.CheckerboardBackground
 import com.kstd.android.jth.ui.theme.ComicsAppTheme
 import com.kstd.android.jth.ui.util.Constants
@@ -150,9 +149,6 @@ fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
                             }
                         },
                         onRelease = { 
-                            // This is the definitive fix for the hover crash.
-                            // When LazyColumn disposes this View, explicitly clear its hover state
-                            // to prevent the IllegalStateException in AndroidComposeView.
                             it.isHovered = false
                         },
                         update = { imageView ->

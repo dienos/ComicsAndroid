@@ -23,6 +23,6 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSettingRepository(
-        comicsRepositoryImpl: SettingsRepositoryImpl
+        settingsRepositoryImpl: SettingsRepositoryImpl
     ): SettingsRepository
 }

@@ -23,7 +23,6 @@ import com.kstd.android.jth.ui.extension.getImageFilterByResolution
 import com.kstd.android.jth.ui.util.PrefKey.IS_BOOK_MARK_GUIDE_SHOWN
 import com.kstd.android.jth.ui.util.PrefKey.IS_HOME_GUIDE_SHOWN
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -150,7 +149,7 @@ class ComicsViewModel @Inject constructor(
     val isRefreshing = _isRefreshing.asStateFlow()
 
     fun onSingleBookmarkClick(item: ComicsItem) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val bookmarkItem = BookmarkItem(
                 title = item.title ?: "",
                 thumbnail = item.thumbnail ?: "",
@@ -169,7 +168,7 @@ class ComicsViewModel @Inject constructor(
     }
 
     fun onAddBookmarksClick() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val itemsToBookmark = _checkedHomeItems.value.values.map { comicItem ->
                 BookmarkItem(
                     title = comicItem.title ?: "",
@@ -195,7 +194,7 @@ class ComicsViewModel @Inject constructor(
     }
 
     fun onDeleteBookmarksClick() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val itemsToDelete =
                 rawBookmarksFlow.value.filter { _checkedBookmarkItems.value.contains(it.link) }
 
@@ -214,14 +213,14 @@ class ComicsViewModel @Inject constructor(
     }
 
     fun onHomeGuideTouch() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             setHomeGuideShownUseCase.invoke(IS_HOME_GUIDE_SHOWN, true)
             _isHomeGuideShown.value = true
         }
     }
 
     fun onBookMarkGuideTouch() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             setBookMarkGuideShownUseCase.invoke(IS_BOOK_MARK_GUIDE_SHOWN, true)
             _isBookMarkGuideShown.value = true
         }
