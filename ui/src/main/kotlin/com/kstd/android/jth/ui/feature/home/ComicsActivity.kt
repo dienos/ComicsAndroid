@@ -9,6 +9,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.kstd.android.jth.R
@@ -41,6 +42,12 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_home, R.id.nav_bookmark
+            )
+        )
+
         binding.bottomNavigation.setupWithNavController(navController)
         binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
             viewModel.onTabSelected()
@@ -49,7 +56,7 @@ class ComicsActivity : BaseActivity<ActivityComicsBinding>(R.layout.activity_com
         }
 
         setSupportActionBar(binding.topAppBar)
-        binding.topAppBar.setupWithNavController(navController)
+        binding.topAppBar.setupWithNavController(navController, appBarConfiguration)
     }
 
     private fun observeUiState() {

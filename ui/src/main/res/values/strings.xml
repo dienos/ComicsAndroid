@@ -18,6 +18,8 @@
     <string name="comics_search_title">Comics Search</string>
     <string name="unknown_error">An unknown error occurred.</string>
     <string name="comics_not_loaded">Comics not loaded.</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
 
     <!-- Guide -->
     <string name="guide_home_long_press">Long press an item to enter bookmark add mode.</string>
