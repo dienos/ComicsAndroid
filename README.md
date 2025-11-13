@@ -41,18 +41,18 @@ KSTDAndroidJTH (Root)
 
 ## 2. 사용 라이브러리 및 용도
 
-| 라이브러리 | 사용 용도 |
-| :--- | :--- |
-| **Kotlin & Coroutines** | 현대적이고 간결한 언어 사용, 비동기 처리를 통한 UI 반응성 확보 |
-| **Jetpack Compose** | Splash, Webtoon Viewer 등 일부 화면을 선언형 UI로 작성 |
-| **Hilt** | 프로젝트 전반의 의존성 주입을 통해 결합도를 낮추고 테스트 용이성 확보 |
-| **ViewModel** | UI 상태를 저장하고 생명주기를 관리, `SavedStateHandle`로 프로세스 종료 대응 |
-| **Room** | 북마크 데이터를 로컬에 안정적으로 저장하기 위한 ORM |
-| **Paging 3** | 대용량의 네트워크 데이터를 효율적으로 로드하고 표시 (무한 스크롤) |
-| **Navigation Component** | Single Activity 구조에서 Fragment 간의 화면 전환 관리 |
+| 라이브러리 | 사용 용도                                                      |
+| :--- |:-----------------------------------------------------------|
+| **Kotlin & Coroutines** | 구글 공식 언어 사용, 비동기 처리를 통한 UI 반응성 확보                          |
+| **Jetpack Compose** | Splash, Webtoon Viewer 등 일부 화면을 선언형 UI로 작성                 |
+| **Hilt** | 프로젝트 전반의 의존성 주입을 통해 결합도를 낮추고 테스트 용이성 확보                    |
+| **ViewModel** | UI 상태를 저장하고 생명주기를 관리, `SavedStateHandle`로 프로세스 종료 대응       |
+| **Room** | 북마크 데이터를 로컬에 안정적으로 저장하기 위한 ORM                             |
+| **Paging 3** | 대용량의 네트워크 데이터를 효율적으로 로드하고 표시 (무한 스크롤)                      |
+| **Navigation Component** | Single Activity 구조에서 Fragment 간의 화면 전환 관리                  |
 | **Retrofit & OkHttp** | Naver API와의 Type-safe한 네트워크 통신, `Interceptor`를 통한 인증 헤더 주입 |
-| **Glide** | `AppGlideModule`을 통한 캐시 튜닝, 리스트 뷰의 이미지 로딩 및 캐싱 |
-| **Lottie** | Splash 화면에서 고품질 벡터 애니메이션을 부드럽게 재생 |
+| **Glide** | `AppGlideModule`을 통한 캐시 튜닝, 리스트 뷰의 이미지 로딩 및 캐싱             |
+| **Lottie** | Splash 화면에서 고품질 벡터 애니메이션을 부드럽게 재생                          |
 
 ## 3. 주요 기능 및 특징
 
