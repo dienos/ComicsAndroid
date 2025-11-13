@@ -293,6 +293,7 @@ class ComicsViewModel @Inject constructor(
 
     fun refreshBookmark() {
         viewModelScope.launch {
+            cancelSelectionMode()
             _isRefreshing.value = true
             delay(1000)
             _isRefreshing.value = false

@@ -35,8 +35,9 @@ fun ImageView.bindImageUrl(url: String?, width: String?, height: String?) {
             dataSource: DataSource?,
             isFirstResource: Boolean
         ): Boolean {
-            if (this@bindImageUrl.width > 0 && this@bindImageUrl.height > 0) {
-                val viewRatio = this@bindImageUrl.height.toFloat() / this@bindImageUrl.width.toFloat()
+            if (width.toInt() > 0 && height.toInt() > 0) {
+                val viewRatio =
+                    this@bindImageUrl.height.toFloat() / this@bindImageUrl.width.toFloat()
                 val imageRatio = height.toFloat() / width.toFloat()
 
                 this@bindImageUrl.scaleType = if (viewRatio > imageRatio) {

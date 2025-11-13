@@ -75,13 +75,26 @@ internal fun createProgressDrawable(imageView: ImageView): CircularProgressDrawa
     }
 }
 
-internal fun ImageView.executeGlide(url: String, listener: RequestListener<Drawable>) {
+private fun extractWidthFromThumbnailUrl(url: String): String? {
+    val regex = "type=b(\\\\d+)".toRegex()
+    val matchResult = regex.find(url)
+    return matchResult?.groupValues?.get(1)
+}
+
+
+internal fun ImageView.executeGlide(
+    url: String,
+    listener: RequestListener<Drawable>
+) {
+    val height = extractWidthFromThumbnailUrl(url)?.toInt() ?: 150
+
     val thumbnailRequest = Glide.with(context)
         .load(url)
         .apply(prepareRequestOptions())
 
     Glide.with(this.context)
         .load(url)
+        .override(100, height)
         .thumbnail(thumbnailRequest)
         .transition(DrawableTransitionOptions.withCrossFade())
         .listener(listener)

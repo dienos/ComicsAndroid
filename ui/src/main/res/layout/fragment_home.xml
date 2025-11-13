@@ -38,6 +38,7 @@
             android:id="@+id/guide_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingHorizontal="10dp"
             android:background="@color/guide_background"
             android:visibility="@{viewModel.isHomeGuideShown ? View.GONE : View.VISIBLE}"
             tools:visibility="visible">
