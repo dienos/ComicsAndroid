@@ -1,10 +1,11 @@
 package com.kstd.android.jth.data.repository
 
 import com.kstd.android.jth.data.datasource.local.entity.BookmarkEntity
-import com.kstd.android.jth.data.datasource.local.source.ComicsLocalSource
-import com.kstd.android.jth.data.datasource.remote.source.ComicsRemoteSource
-import com.kstd.android.jth.domain.model.local.BookmarkItem
-import com.kstd.android.jth.domain.model.remote.ComicsResponse
+import com.comics.android.jth.data.datasource.local.source.ComicsLocalSource
+import com.comics.android.jth.data.datasource.remote.source.ComicsRemoteSource
+import com.comics.android.jth.data.repository.ComicsRepositoryImpl
+import com.comics.android.jth.domain.model.local.BookmarkItem
+import com.comics.android.jth.domain.model.remote.ComicsResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf

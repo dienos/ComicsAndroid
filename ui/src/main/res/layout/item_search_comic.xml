@@ -6,10 +6,10 @@
     <data>
         <variable
             name="item"
-            type="com.kstd.android.jth.domain.model.remote.ComicsItem" />
+            type="com.comics.android.jth.domain.model.remote.ComicsItem" />
         <variable
             name="viewModel"
-            type="com.kstd.android.jth.ui.feature.search.ComicsSearchViewModel" />
+            type="com.comics.android.jth.ui.feature.search.ComicsSearchViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -30,7 +30,7 @@
             <ImageView
                 android:id="@+id/iv_thumbnail"
                 android:layout_width="100dp"
-                android:layout_height="0dp"
+                android:layout_height="150dp"
                 app:imageHeight="@{item.sizeHeight}"
                 app:imageUrl="@{item.thumbnail}"
                 app:imageWidth="@{item.sizeWidth}"

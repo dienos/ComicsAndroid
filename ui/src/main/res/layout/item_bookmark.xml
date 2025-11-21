@@ -7,10 +7,10 @@
         <import type="android.view.View" />
         <variable
             name="item"
-            type="com.kstd.android.jth.domain.model.local.BookmarkItem" />
+            type="com.comics.android.jth.domain.model.local.BookmarkItem" />
         <variable
             name="viewModel"
-            type="com.kstd.android.jth.ui.feature.home.ComicsViewModel" />
+            type="com.comics.android.jth.ui.feature.home.ComicsViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -29,7 +29,7 @@
             <ImageView
                 android:id="@+id/iv_thumbnail"
                 android:layout_width="100dp"
-                android:layout_height="match_parent"
+                android:layout_height="150dp"
                 android:scaleType="centerCrop"
                 app:imageUrl="@{item.thumbnail}"
                 app:imageWidth="@{item.sizeWidth}"

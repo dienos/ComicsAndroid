@@ -7,7 +7,7 @@
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.kstd.android.jth.ui.feature.search.ComicsSearchViewModel" />
+            type="com.comics.android.jth.ui.feature.search.ComicsSearchViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

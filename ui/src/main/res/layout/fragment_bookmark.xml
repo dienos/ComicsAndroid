@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.kstd.android.jth.ui.feature.home.ComicsViewModel" />
+            type="com.comics.android.jth.ui.feature.home.ComicsViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
