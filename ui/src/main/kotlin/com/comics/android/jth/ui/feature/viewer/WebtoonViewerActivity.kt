@@ -1,0 +1,167 @@
+package com.comics.android.jth.ui.feature.viewer
+
+import android.os.Bundle
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.lifecycleScope
+import com.comics.android.jth.R
+import com.comics.android.jth.domain.model.remote.ComicsItem
+import com.comics.android.jth.ui.composable.CheckerboardBackground
+import com.comics.android.jth.ui.extension.getParcelableArrayList
+import com.comics.android.jth.ui.theme.ComicsAppTheme
+import com.comics.android.jth.ui.util.Constants
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+
+
+@AndroidEntryPoint
+class WebtoonViewerActivity : ComponentActivity() {
+
+    private val viewModel: WebtoonViewerViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val selectedIndex = intent.getIntExtra(Constants.EXTRA_SELECTED_INDEX, 0)
+        val comics = intent.getParcelableArrayList<ComicsItem>(Constants.EXTRA_COMICS_LIST) ?: emptyList()
+
+        viewModel.setWebtoonData(comics, selectedIndex)
+        observeToastEvents()
+
+        setContent {
+            ComicsAppTheme {
+                WebtoonViewerScreen(viewModel)
+            }
+        }
+
+        if(selectedIndex > 0) {
+            viewModel.showToast(application.getString(R.string.able_up_scroll))
+        }
+    }
+
+    private fun observeToastEvents() {
+        lifecycleScope.launch {
+            viewModel.toastEvent.collectLatest { message ->
+                Toast.makeText(this@WebtoonViewerActivity, message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WebtoonViewerScreen(viewModel: WebtoonViewerViewModel) {
+    val webtoonItems by viewModel.webtoonItems.collectAsState()
+    val initialIndex by viewModel.initialIndex.collectAsState()
+    val title by viewModel.title.collectAsState()
+    val readyBitmapKeys by viewModel.readyBitmapKeys.collectAsState()
+
+    val lazyListState = rememberLazyListState()
+    var isInitialScrollDone by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { lazyListState.firstVisibleItemIndex }
+            .distinctUntilChanged()
+            .collect { index ->
+                if (index > 0) {
+                    viewModel.onVisibleItemsChanged(index)
+                }
+            }
+    }
+
+    LaunchedEffect(key1 = initialIndex, key2 = webtoonItems) {
+        if (!isInitialScrollDone && webtoonItems.isNotEmpty() && initialIndex >= 0) {
+            lazyListState.scrollToItem(index = initialIndex)
+            isInitialScrollDone = true
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            )
+        }
+    ) { padding ->
+        Box(modifier = Modifier.padding(padding).fillMaxSize()) {
+            CheckerboardBackground(modifier = Modifier.fillMaxSize())
+
+            LazyColumn(
+                state = lazyListState,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                itemsIndexed(webtoonItems, key = { _, item -> item.link ?: "" }) { _, item ->
+                    val imageWidth = item.sizeWidth?.toIntOrNull()
+                    val imageHeight = item.sizeHeight?.toIntOrNull()
+
+                    var itemModifier = Modifier.fillMaxWidth()
+                    if (imageWidth != null && imageHeight != null && imageWidth > 0 && imageHeight > 0) {
+                        itemModifier =
+                            itemModifier.aspectRatio(imageWidth.toFloat() / imageHeight.toFloat())
+                    }
+
+                    val url = item.link ?: ""
+                    val isBitmapReady = readyBitmapKeys.contains(url)
+
+                    AndroidView(
+                        factory = {
+                            ImageView(it).apply {
+                                scaleType = ImageView.ScaleType.FIT_XY
+                            }
+                        },
+                        onRelease = { 
+                            it.isHovered = false
+                        },
+                        update = { imageView ->
+                            if (isBitmapReady) {
+                                val bitmap = viewModel.getBitmapFromCache(url)
+                                if (bitmap != null) {
+                                    imageView.setImageBitmap(bitmap)
+                                } else {
+                                    imageView.setImageDrawable(null)
+                                }
+                            } else {
+                                imageView.setImageDrawable(null)
+                            }
+                        },
+                        modifier = itemModifier
+                    )
+                }
+            }
+        }
+    }
+}
