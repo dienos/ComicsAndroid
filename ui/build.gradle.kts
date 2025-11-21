@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kstd.android.jth"
+    namespace = "com.comics.android.jth"
     compileSdk = 36
 
     buildFeatures {
@@ -17,7 +17,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.kstd.android.jth"
+        applicationId = "com.comics.android.jth"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

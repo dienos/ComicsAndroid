@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kstd.android.jth.domain"
+    namespace = "com.comics.android.jth.domain"
     compileSdk {
         version = release(36)
     }

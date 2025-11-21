@@ -7,14 +7,14 @@ plugins {
 }
 
 android {
-    namespace = "com.kstd.android.jth.data"
+    namespace = "com.comics.android.jth"
 
     compileSdk = 36
 
     defaultConfig {
         minSdk = 26
         targetSdk = 36
-        testInstrumentationRunner = "com.kstd.android.jth.data.CustomTestRunner"
+        testInstrumentationRunner = "com.comics.android.jth.data.CustomTestRunner"
     }
 
     buildTypes {

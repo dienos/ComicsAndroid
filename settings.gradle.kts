@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "KSTDAndroidJTH"
+rootProject.name = "ComicsAndroidJTH"
 include(":ui")
 include(":domain")
 include(":data")
